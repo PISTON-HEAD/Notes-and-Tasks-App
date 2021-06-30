@@ -80,11 +80,11 @@ class _todoListCreationState extends State<todoListCreation> {
                       //Navigator.of(context).pop();
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => profile_Screen()));
                     },
-                    child: Icon(FontAwesomeIcons.solidClipboard,color: Colors.grey,size: 30,),
+                    child: Icon(FontAwesomeIcons.stickyNote,color: Colors.grey,size: 30,),
                   ),
                   MaterialButton(
                     autofocus: true,
-                    child: Icon(FontAwesomeIcons.stickyNote,color: Colors.limeAccent,size: 30,),
+                    child: Icon(FontAwesomeIcons.solidClipboard,color: Colors.limeAccent,size: 30,),
                     onPressed: () {}
                   ),
                 ],
@@ -251,9 +251,9 @@ class _todoListCreationState extends State<todoListCreation> {
           highlightElevation: 20,
           autofocus: true,
           child: Icon(
-            Icons.add,
+            FontAwesomeIcons.clipboardList,
             color: Colors.black,
-            size: 35,
+            size: 30,
           ),
         ),
       ),

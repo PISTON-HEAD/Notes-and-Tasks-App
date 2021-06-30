@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:to_do_list/widgets/customWidgets.dart';
 
@@ -16,7 +17,6 @@ class _SeeNoteState extends State<SeeNote> {
   TextEditingController titleEditingController = TextEditingController();
   TextEditingController notesEditingController = TextEditingController();
 
-
   TextStyle notesTitle(Color color , double size){
     return TextStyle(
       color: color,
@@ -24,6 +24,23 @@ class _SeeNoteState extends State<SeeNote> {
     );
   }
 
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  notesUpdater(){
+
+    widget.getDoc.reference.update({
+      "Title":titleEditingController.text,
+      "Content":notesEditingController.text,
+    }).whenComplete(() => Navigator.of(context).pop());
+  }
+
+  @override
+  void initState() {
+    titleEditingController = TextEditingController(text: widget.getDoc["Title"]);
+    notesEditingController = TextEditingController(text:  widget.getDoc["Content"]);
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +52,7 @@ class _SeeNoteState extends State<SeeNote> {
             onPressed: (){
               if(formKey.currentState.validate()){
                 print("Title Name: ${titleEditingController.text}");
+                notesUpdater();
               }
             },
           ),

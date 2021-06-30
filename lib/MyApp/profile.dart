@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
 import 'package:to_do_list/MyApp/todoList.dart';
 import 'package:to_do_list/widgets/customWidgets.dart';
-
 import 'NotesveriWer.dart';
 import 'notesPage.dart';
 
@@ -72,12 +70,12 @@ class _profile_ScreenState extends State<profile_Screen>
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  width: MediaQuery.of(context).size.width / 5,
+                  width: MediaQuery.of(context).size.width / 5.5,
                 ),
                 MaterialButton(
                   onPressed: () {},
                   child: Icon(
-                    FontAwesomeIcons.solidClipboard,
+                    FontAwesomeIcons.stickyNote,
                     color: Colors.limeAccent,
                     size: 30,
                   ),
@@ -85,7 +83,8 @@ class _profile_ScreenState extends State<profile_Screen>
                 MaterialButton(
                   autofocus: true,
                   child: Icon(
-                    FontAwesomeIcons.stickyNote,
+
+                    FontAwesomeIcons.solidClipboard,
                     color: Colors.grey,
                     size: 30,
                   ),
@@ -143,63 +142,97 @@ class _profile_ScreenState extends State<profile_Screen>
       ),
       backgroundColor: Colors.black,
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.cyanAccent,
+        highlightElevation: 20,
         onPressed: () {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => NotesScreen()));
         },
-        child: Icon(FontAwesomeIcons.evernote),
+        child: Icon(FontAwesomeIcons.plus,color: Colors.black,size: 30,),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream:  FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).collection("Notes").snapshots(),
-        builder: (context, snapshot) {
-          return GridView.builder(
-            gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-            itemCount: snapshot.hasData?snapshot.data.docs.length:0,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: (){
-                  print(snapshot.data.docs[index]["Title"]);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SeeNote(getDoc:snapshot.data.docs[index] ,)));
-                },
-                child: Container(
-                  height: 150,
-                  margin: EdgeInsets.all(10),
-                  color: Colors.grey[200],
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: Text(snapshot.data.docs[index]["Title"],style: TextStyle(
-                            color: Colors.black,
-                            fontWeight:FontWeight.w900,
-                            fontSize: 15,
-                            fontFamily: "Cinzel"
-                        ),),
-                      ),
-                    ],
+          stream: FirebaseFirestore.instance
+              .collection("My Task")
+              .doc(auth.currentUser.uid)
+              .collection("Notes")
+              .snapshots(),
+          builder: (context, snapshot) {
+            return GridView.builder(
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              itemCount: snapshot.hasData ? snapshot.data.docs.length : 0,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    print(snapshot.data.docs[index]["Title"]);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SeeNote(
+                                  getDoc: snapshot.data.docs[index],
+                                )));
+                  },
+                  child: Container(
+                    height: 150,
+                    margin: EdgeInsets.all(10),
+                    color: Colors.grey[200],
+                    child: Column(
+                      children: [
+                        ListTile(
+                          autofocus: true,
+                          trailing: IconButton(
+                            icon: Icon(
+                              FontAwesomeIcons.trash,
+                            ),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                        "Delete Note ? need to do styling"),
+                                    content: Row(
+                                      children: [
+                                        TextButton(
+                                            onPressed: () {
+                                              print("Deleting");
+                                              snapshot
+                                                  .data.docs[index].reference
+                                                  .delete()
+                                                  .whenComplete(() =>
+                                                      Navigator.of(context)
+                                                          .pop());
+                                            },
+                                            style: ButtonStyle(),
+                                            child: Text("Delete")),
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text("Cancel")),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                          leading: Text(
+                            snapshot.data.docs[index]["Title"],
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 15,
+                                fontFamily: "Cinzel"),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        }
-      ),
+                );
+              },
+            );
+          }),
     );
   }
 }
-
-/*
-Text(snapshot.data.docs[index]["Title"],style: TextStyle(
-                        color: Colors.black,
-                        fontWeight:FontWeight.w900,
-                        fontSize: 15,
-                        fontFamily: "Cinzel"
-                      ),),
-
-
-
-
-
-
-
- */
