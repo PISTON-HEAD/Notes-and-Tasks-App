@@ -126,8 +126,8 @@ class _profile_ScreenState extends State<profile_Screen>
         actions: [
           IconButton(
             icon: Icon(
-              Icons.add_to_home_screen_outlined,
-              color: Colors.white70,
+              FontAwesomeIcons.signOutAlt,
+              color: Colors.white,
             ),
             onPressed: () async {
               auth.signOut();
@@ -173,16 +173,32 @@ class _profile_ScreenState extends State<profile_Screen>
                                 )));
                   },
                   child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.accents[index+3],
+                        border: Border.all(color: Colors.cyanAccent,width: 2.5),
+                        //color: Colors.yellow[200],
+                        borderRadius: BorderRadius.circular(10)
+                    ),
                     height: 150,
                     margin: EdgeInsets.all(10),
-                    color: Colors.grey[200],
-                    child: Column(
+                    child: Stack(
                       children: [
-                        ListTile(
-                          autofocus: true,
-                          trailing: IconButton(
+                        Positioned(
+                          top: 145,
+                            left: 3,
+                            child: Text(snapshot.data.docs[index]["Time"].toString().substring(0,16),style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold
+                            ),)
+                        ),
+                        Positioned(
+                          top: 128,
+                          left: MediaQuery.of(context).size.width/3.2,
+                          child:
+                          IconButton(
                             icon: Icon(
                               FontAwesomeIcons.trash,
+
                             ),
                             onPressed: () {
                               showDialog(
@@ -190,8 +206,9 @@ class _profile_ScreenState extends State<profile_Screen>
                                 builder: (context) {
                                   return AlertDialog(
                                     title: Text(
-                                        "Delete Note ? need to do styling"),
+                                        "  Delete Note ?"),
                                     content: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
                                         TextButton(
                                             onPressed: () {
@@ -200,9 +217,10 @@ class _profile_ScreenState extends State<profile_Screen>
                                                   .data.docs[index].reference
                                                   .delete()
                                                   .whenComplete(() =>
-                                                      Navigator.of(context)
-                                                          .pop());
+                                                  Navigator.of(context)
+                                                      .pop());
                                             },
+                                            autofocus: true,
                                             style: ButtonStyle(),
                                             child: Text("Delete")),
                                         TextButton(
@@ -217,14 +235,34 @@ class _profile_ScreenState extends State<profile_Screen>
                               );
                             },
                           ),
-                          leading: Text(
-                            snapshot.data.docs[index]["Title"],
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 15,
-                                fontFamily: "Cinzel"),
-                          ),
+
+                        ),
+                        Column(
+                          children: [
+                            ListTile(
+                              autofocus: true,
+                              subtitle:Text(
+                                snapshot.data.docs[index]["Content"],
+                                style: TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.w800,
+                                    decorationThickness: 2.5,
+                                    //backgroundColor: Colors.white,
+                                    fontSize: 13.5,
+                                    fontFamily: "Merriweather"),
+                              ),
+                              title: Text(
+                                snapshot.data.docs[index]["Title"],
+                                style: TextStyle(
+                                    color: CupertinoColors.black,
+                                    fontWeight: FontWeight.w900,
+                                    decorationThickness: 2.5,
+                                    //backgroundColor: Colors.white,
+                                    fontSize: 14,
+                                    fontFamily: "Cinzel"),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -236,3 +274,5 @@ class _profile_ScreenState extends State<profile_Screen>
     );
   }
 }
+/*
+ */

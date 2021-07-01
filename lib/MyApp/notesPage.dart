@@ -29,7 +29,7 @@ uploader()async{
       {
         "Title":titleEditingController.text,
         "Content":notesEditingController.text,
-        "Time":DateTime.now(),
+        "Time":DateTime.now().toString(),
       }).whenComplete(() => Navigator.of(context).pop());
 }
 

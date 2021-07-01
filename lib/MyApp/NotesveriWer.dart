@@ -27,7 +27,6 @@ class _SeeNoteState extends State<SeeNote> {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   notesUpdater(){
-
     widget.getDoc.reference.update({
       "Title":titleEditingController.text,
       "Content":notesEditingController.text,
@@ -67,10 +66,11 @@ class _SeeNoteState extends State<SeeNote> {
                 key: formKey,
                 child: Container(
                   child: TextFormField(
+                    maxLines: 1,
                     autocorrect: true,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value){
-                      return value.length==0?"Enter a title":null;
+                      return value.length==0 && value.length<25?"Enter a valid title":null;
                     },
                     controller:titleEditingController,
                     style: TextStyle(
