@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:to_do_list/authenticate/firebaseAuth.dart';
+
 import 'package:to_do_list/widgets/customWidgets.dart';
 
 class ForgotPassword extends StatefulWidget {

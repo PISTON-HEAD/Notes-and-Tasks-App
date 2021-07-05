@@ -24,7 +24,7 @@ class _profile_ScreenState extends State<profile_Screen>
   bool k = true;
   var checkValue = true;
   List getter = [];
-  Duration dur = Duration(milliseconds: 400);
+  Duration dur = Duration(milliseconds: 500);
   List checkBoxValue = [];
   String storing, changer = "";
   @override
