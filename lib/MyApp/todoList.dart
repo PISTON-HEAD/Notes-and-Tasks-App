@@ -39,7 +39,6 @@ class _todoListCreationState extends State<todoListCreation> {
 
   @override
   void initState() {
-    ownerName = auth.currentUser.displayName;
     if(getterList != null ){
       checkBoxList = checkBoxValue;
       print("The getter List on screen 1  in screen 2:$getterList");
@@ -66,7 +65,7 @@ class _todoListCreationState extends State<todoListCreation> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "$ownerName",
+                "To Do List",
                 style: appBar_Style,
               ),
               Row(
@@ -97,8 +96,8 @@ class _todoListCreationState extends State<todoListCreation> {
           actions: [
             IconButton(
               icon: Icon(
-                Icons.add_to_home_screen_outlined,
-                color: Colors.white70,
+                FontAwesomeIcons.signOutAlt,
+                color: Colors.white,
               ),
               onPressed: () async {
                 auth.signOut();
