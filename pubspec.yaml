@@ -75,6 +75,7 @@ flutter:
     - family: Merriweather
       fonts:
         - asset: fonts/Merriweather-Regular.ttf
+        - asset: fonts/Merriweather-Bold.ttf
 
     - family: Oswald
       fonts:
@@ -91,6 +92,10 @@ flutter:
     - family: Cinzel
       fonts:
         - asset: fonts/Cinzel-Medium.ttf
+
+    - family: ZenTokyoZoo
+      fonts:
+        - asset: fonts/ZenTokyoZoo-Regular.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

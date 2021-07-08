@@ -98,7 +98,7 @@ class _profile_ScreenState extends State<profile_Screen>
                           getter = value["Task List"];
                           checkBoxValue = value["Checker"];
                           print(
-                              "The inputList ater  server in screen 1:  $getter");
+                              "The inputList after  server in screen 1:  $getter");
                         });
                       });
                       Future.delayed(dur).then((value) {
@@ -147,95 +147,101 @@ class _profile_ScreenState extends State<profile_Screen>
           },
           child: Icon(FontAwesomeIcons.plus,color: Colors.black,size: 30,),
         ),
-        body: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection("My Task")
-                .doc(auth.currentUser.uid)
-                .collection("Notes")
-                .snapshots(),
-            builder: (context, snapshot) {
-              return GridView.builder(
-                gridDelegate:
-                    SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                itemCount: snapshot.hasData ? snapshot.data.docs.length : 0,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      print(snapshot.data.docs[index]["Title"]);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SeeNote(
-                                    getDoc: snapshot.data.docs[index],
-                                  )));
-                    },
-                    onLongPress: (){
-                      buildShowDialog(context, snapshot, index);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.accents[index],
-                          border: Border.all(color: Colors.cyanAccent,width: 2.5),
-                          //color: Colors.yellow[200],
-                          borderRadius: BorderRadius.circular(10)
-                      ),
-                      //height: 180,
-                      margin: EdgeInsets.all(10),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            top: MediaQuery.of(context).size.height/4.85,
-                              left: MediaQuery.of(context).size.width/50,
-                              child: Text(snapshot.data.docs[index]["Time"].toString().substring(0,16),style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold
-                              ),)
-                          ),
-                          Positioned(
-                            top: MediaQuery.of(context).size.height/5.65,
-                            left: MediaQuery.of(context).size.width/3.1,
-                            child:
-                            IconButton(
-                              icon: Icon(
-                                FontAwesomeIcons.trash,
+        body: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(image: NetworkImage("https://i.pinimg.com/564x/02/c3/4b/02c34bd8761d9c04596bf4434359458e.jpg"),fit: BoxFit.cover)
+          ),
+          child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("My Task")
+                  .doc(auth.currentUser.uid)
+                  .collection("Notes")
+                  .snapshots(),
+              builder: (context, snapshot) {
+                return GridView.builder(
+                  gridDelegate:
+                      SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                  itemCount: snapshot.hasData ? snapshot.data.docs.length : 0,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        print(snapshot.data.docs[index]["Title"]);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SeeNote(
+                                      getDoc: snapshot.data.docs[index],
+                                    )));
+                      },
+                      onLongPress: (){
+                        buildShowDialog(context, snapshot, index);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.accents[index],
+                            border: Border.all(color: Colors.cyanAccent,width: 2.5),
+                            //color: Colors.yellow[200],
+                            borderRadius: BorderRadius.circular(10)
+                        ),
+                        //height: 180,
+                        margin: EdgeInsets.all(10),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              top: MediaQuery.of(context).size.height/4.85,
+                                left: MediaQuery.of(context).size.width/50,
+                                child: Text(snapshot.data.docs[index]["Time"].toString().substring(0,16),style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold
+                                ),)
+                            ),
+                            Positioned(
+                              top: MediaQuery.of(context).size.height/5.65,
+                              left: MediaQuery.of(context).size.width/3.1,
+                              child:
+                              IconButton(
+                                icon: Icon(
+                                  FontAwesomeIcons.trash,
 
+                                ),
+                                onPressed: () {
+                                  buildShowDialog(context, snapshot, index);
+                                },
+                              )
+                            ),
+                            ListTile(
+                              autofocus: true,
+                              subtitle:Text(
+                                snapshot.data.docs[index]["Content"],
+                                style: TextStyle(
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w800,
+                                    decorationThickness: 2.5,
+                                    //backgroundColor: Colors.white,
+                                    fontSize: 12,
+                                    //"pacifico"
+                                    fontFamily:"Merriweather" ),
                               ),
-                              onPressed: () {
-                                buildShowDialog(context, snapshot, index);
-                              },
-                            )
-                          ),
-                          ListTile(
-                            autofocus: true,
-                            subtitle:Text(
-                              snapshot.data.docs[index]["Content"],
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.w800,
-                                  decorationThickness: 2.5,
-                                  //backgroundColor: Colors.white,
-                                  fontSize: 13.5,
-                                  fontFamily: "Merriweather"),
+                              title: Text(
+                                snapshot.data.docs[index]["Title"],
+                                style: TextStyle(
+                                    color: CupertinoColors.black,
+                                    fontWeight: FontWeight.bold,
+                                    decorationThickness: 2.5,
+                                    //backgroundColor: Colors.white,
+                                    fontSize: 22,
+                                    fontFamily: "ZenTokyoZoo"),
+                              ),
                             ),
-                            title: Text(
-                              snapshot.data.docs[index]["Title"],
-                              style: TextStyle(
-                                  color: CupertinoColors.black,
-                                  fontWeight: FontWeight.bold,
-                                  decorationThickness: 2.5,
-                                  //backgroundColor: Colors.white,
-                                  fontSize: 16,
-                                  fontFamily: "Cinzel"),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              );
-            }),
+                    );
+                  },
+                );
+              }),
+        ),
       ),
     );
   }
