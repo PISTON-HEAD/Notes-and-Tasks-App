@@ -139,26 +139,14 @@ class _profile_ScreenState extends State<profile_Screen>
           ],
         ),
         backgroundColor: Colors.black,
-        floatingActionButton: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            FloatingActionButton(
-                backgroundColor: Colors.cyanAccent,
-                highlightElevation: 20,
-                child: Icon(Icons.zoom_out_rounded,color: Colors.white,size: 30,),
-                onPressed: (){
-                  showSearch(context: context, delegate: searchTitle());
-                }),
-            FloatingActionButton(
-              backgroundColor: Colors.cyanAccent,
-              highlightElevation: 20,
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => NotesScreen()));
-              },
-              child: Icon(FontAwesomeIcons.plus,color: Colors.white,size: 30,),
-            ),
-          ],
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.cyanAccent,
+          highlightElevation: 20,
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => NotesScreen()));
+          },
+          child: Icon(FontAwesomeIcons.plus,color: Colors.white,size: 30,),
         ),
         body: Container(
           decoration: BoxDecoration(
@@ -174,24 +162,39 @@ class _profile_ScreenState extends State<profile_Screen>
                 return GridView.builder(
                   gridDelegate:
                       SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                  itemCount: snapshot.hasData ? snapshot.data.docs.length : 0,
+                  itemCount: snapshot.hasData ? snapshot.data.docs.length+1 : 0,
                   itemBuilder: (context, index) {
-                    return GestureDetector(
+                    return index == 0 && snapshot.hasData ?GestureDetector(
+                      onTap: (){
+                        showSearch(context: context, delegate: searchTitle());
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            border: Border.all(color: Colors.cyanAccent,width: 2.5),
+                            //color: Colors.yellow[200],
+                            borderRadius: BorderRadius.circular(10)
+                        ),
+                        //height: 180,
+                        margin: EdgeInsets.all(10),
+                        child: Icon(Icons.search_sharp,color: Colors.amber,size: 70,),
+                      ),
+                    ) : GestureDetector(
                       onTap: () {
-                        print(snapshot.data.docs[index]["Title"]);
+                        print(snapshot.data.docs[index-1]["Title"]);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => SeeNote(
-                                      getDoc: snapshot.data.docs[index],
+                                      getDoc: snapshot.data.docs[index-1],
                                     )));
                       },
                       onLongPress: (){
-                        buildShowDialog(context, snapshot, index);
+                        buildShowDialog(context, snapshot, index-1);
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                            color: Colors.accents[index],
+                            color: Colors.accents[index-1],
                             border: Border.all(color: Colors.cyanAccent,width: 2.5),
                             //color: Colors.yellow[200],
                             borderRadius: BorderRadius.circular(10)
@@ -203,7 +206,7 @@ class _profile_ScreenState extends State<profile_Screen>
                             Positioned(
                               top: MediaQuery.of(context).size.height/4.85,
                                 left: MediaQuery.of(context).size.width/50,
-                                child: Text(snapshot.data.docs[index]["Time"].toString().substring(0,16),style: TextStyle(
+                                child: Text(snapshot.data.docs[index-1]["Time"].toString().substring(0,16),style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold
@@ -219,14 +222,14 @@ class _profile_ScreenState extends State<profile_Screen>
 
                                 ),
                                 onPressed: () {
-                                  buildShowDialog(context, snapshot, index);
+                                  buildShowDialog(context, snapshot, index-1);
                                 },
                               )
                             ),
                             ListTile(
                               autofocus: true,
                               subtitle:Text(
-                                snapshot.data.docs[index]["Content"],
+                                snapshot.data.docs[index-1]["Content"],
                                 style: TextStyle(
                                     color: Colors.black87,
                                     fontWeight: FontWeight.w800,
@@ -237,7 +240,7 @@ class _profile_ScreenState extends State<profile_Screen>
                                     fontFamily:"Merriweather" ),
                               ),
                               title: Text(
-                                snapshot.data.docs[index]["Title"],
+                                snapshot.data.docs[index-1]["Title"],
                                 style: TextStyle(
                                     color: CupertinoColors.black,
                                     fontWeight: FontWeight.bold,
@@ -306,6 +309,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
+import 'package:to_do_list/LogScreens/titleSearcher.dart';
 import 'package:to_do_list/MyApp/todoList.dart';
 import 'package:to_do_list/widgets/customWidgets.dart';
 import 'NotesveriWer.dart';
@@ -445,7 +449,7 @@ class _profile_ScreenState extends State<profile_Screen>
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => NotesScreen()));
           },
-          child: Icon(FontAwesomeIcons.plus,color: Colors.black,size: 30,),
+          child: Icon(FontAwesomeIcons.plus,color: Colors.white,size: 30,),
         ),
         body: Container(
           decoration: BoxDecoration(
@@ -461,24 +465,39 @@ class _profile_ScreenState extends State<profile_Screen>
                 return GridView.builder(
                   gridDelegate:
                       SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                  itemCount: snapshot.hasData ? snapshot.data.docs.length : 0,
+                  itemCount: snapshot.hasData ? snapshot.data.docs.length+1 : 0,
                   itemBuilder: (context, index) {
-                    return GestureDetector(
+                    return index == 0 && snapshot.hasData ?GestureDetector(
+                      onTap: (){
+                        showSearch(context: context, delegate: searchTitle());
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            border: Border.all(color: Colors.cyanAccent,width: 2.5),
+                            //color: Colors.yellow[200],
+                            borderRadius: BorderRadius.circular(10)
+                        ),
+                        //height: 180,
+                        margin: EdgeInsets.all(10),
+                        child: Icon(Icons.search_sharp,color: Colors.amber,size: 70,),
+                      ),
+                    ) : GestureDetector(
                       onTap: () {
-                        print(snapshot.data.docs[index]["Title"]);
+                        print(snapshot.data.docs[index-1]["Title"]);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => SeeNote(
-                                      getDoc: snapshot.data.docs[index],
+                                      getDoc: snapshot.data.docs[index-1],
                                     )));
                       },
                       onLongPress: (){
-                        buildShowDialog(context, snapshot, index);
+                        buildShowDialog(context, snapshot, index-1);
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                            color: Colors.accents[index],
+                            color: Colors.accents[index-1],
                             border: Border.all(color: Colors.cyanAccent,width: 2.5),
                             //color: Colors.yellow[200],
                             borderRadius: BorderRadius.circular(10)
@@ -490,7 +509,7 @@ class _profile_ScreenState extends State<profile_Screen>
                             Positioned(
                               top: MediaQuery.of(context).size.height/4.85,
                                 left: MediaQuery.of(context).size.width/50,
-                                child: Text(snapshot.data.docs[index]["Time"].toString().substring(0,16),style: TextStyle(
+                                child: Text(snapshot.data.docs[index-1]["Time"].toString().substring(0,16),style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold
@@ -506,14 +525,14 @@ class _profile_ScreenState extends State<profile_Screen>
 
                                 ),
                                 onPressed: () {
-                                  buildShowDialog(context, snapshot, index);
+                                  buildShowDialog(context, snapshot, index-1);
                                 },
                               )
                             ),
                             ListTile(
                               autofocus: true,
                               subtitle:Text(
-                                snapshot.data.docs[index]["Content"],
+                                snapshot.data.docs[index-1]["Content"],
                                 style: TextStyle(
                                     color: Colors.black87,
                                     fontWeight: FontWeight.w800,
@@ -524,7 +543,7 @@ class _profile_ScreenState extends State<profile_Screen>
                                     fontFamily:"Merriweather" ),
                               ),
                               title: Text(
-                                snapshot.data.docs[index]["Title"],
+                                snapshot.data.docs[index-1]["Title"],
                                 style: TextStyle(
                                     color: CupertinoColors.black,
                                     fontWeight: FontWeight.bold,
