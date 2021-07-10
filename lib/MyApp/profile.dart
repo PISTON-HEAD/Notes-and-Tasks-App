@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
@@ -148,115 +149,132 @@ class _profile_ScreenState extends State<profile_Screen>
           },
           child: Icon(FontAwesomeIcons.plus,color: Colors.white,size: 30,),
         ),
-        body: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(image: NetworkImage("https://i.pinimg.com/564x/02/c3/4b/02c34bd8761d9c04596bf4434359458e.jpg"),fit: BoxFit.cover)
-          ),
-          child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("My Task")
-                  .doc(auth.currentUser.uid)
-                  .collection("Notes")
-                  .snapshots(),
-              builder: (context, snapshot) {
-                return GridView.builder(
-                  gridDelegate:
-                      SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                  itemCount: snapshot.hasData ? snapshot.data.docs.length+1 : 0,
-                  itemBuilder: (context, index) {
-                    return index == 0 && snapshot.hasData ?GestureDetector(
-                      onTap: (){
-                        showSearch(context: context, delegate: searchTitle());
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.black,
-                            border: Border.all(color: Colors.cyanAccent,width: 2.5),
-                            //color: Colors.yellow[200],
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        //height: 180,
-                        margin: EdgeInsets.all(10),
-                        child: Icon(Icons.search_sharp,color: Colors.amber,size: 70,),
-                      ),
-                    ) : GestureDetector(
-                      onTap: () {
-                        print(snapshot.data.docs[index-1]["Title"]);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SeeNote(
-                                      getDoc: snapshot.data.docs[index-1],
-                                    )));
-                      },
-                      onLongPress: (){
-                        buildShowDialog(context, snapshot, index-1);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.accents[index-1],
-                            border: Border.all(color: Colors.cyanAccent,width: 2.5),
-                            //color: Colors.yellow[200],
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        //height: 180,
-                        margin: EdgeInsets.all(10),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              top: MediaQuery.of(context).size.height/4.85,
-                                left: MediaQuery.of(context).size.width/50,
-                                child: Text(snapshot.data.docs[index-1]["Time"].toString().substring(0,16),style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold
-                                ),)
+        body: Stack(
+          children: [
+            Positioned(
+              top: 2,
+              child: GestureDetector(
+                onTap: (){
+                  showSearch(context: context, delegate: searchTitle());
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.search_rounded,color: CupertinoColors.black,),
+                      Text("Search with Title Name",style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),)
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.grey,
+                  ),
+                  height: 40,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 40),
+              decoration: BoxDecoration(
+                  image: DecorationImage(image: NetworkImage("https://i.pinimg.com/564x/02/c3/4b/02c34bd8761d9c04596bf4434359458e.jpg"),fit: BoxFit.cover)
+              ),
+              child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("My Task")
+                      .doc(auth.currentUser.uid)
+                      .collection("Notes")
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    return GridView.builder(
+                      gridDelegate:
+                          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                      itemCount: snapshot.hasData ? snapshot.data.docs.length : 0,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            print(snapshot.data.docs[index]["Title"]);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SeeNote(
+                                          getDoc: snapshot.data.docs[index],
+                                        )));
+                          },
+                          onLongPress: (){
+                            buildShowDialog(context, snapshot, index);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.accents[index],
+                                border: Border.all(color: Colors.cyanAccent,width: 2.5),
+                                //color: Colors.yellow[200],
+                                borderRadius: BorderRadius.circular(10)
                             ),
-                            Positioned(
-                              top: MediaQuery.of(context).size.height/5.65,
-                              left: MediaQuery.of(context).size.width/3.1,
-                              child:
-                              IconButton(
-                                icon: Icon(
-                                  FontAwesomeIcons.trash,
-
+                            //height: 180,
+                            margin: EdgeInsets.all(10),
+                            child: Stack(
+                              children: [
+                                Positioned(
+                                  top: MediaQuery.of(context).size.height/4.85,
+                                    left: MediaQuery.of(context).size.width/50,
+                                    child: Text(snapshot.data.docs[index]["Time"].toString().substring(0,16),style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold
+                                    ),)
                                 ),
-                                onPressed: () {
-                                  buildShowDialog(context, snapshot, index-1);
-                                },
-                              )
+                                Positioned(
+                                  top: MediaQuery.of(context).size.height/5.65,
+                                  left: MediaQuery.of(context).size.width/3.1,
+                                  child:
+                                  IconButton(
+                                    icon: Icon(
+                                      FontAwesomeIcons.trash,
+
+                                    ),
+                                    onPressed: () {
+                                      buildShowDialog(context, snapshot, index);
+                                    },
+                                  )
+                                ),
+                                ListTile(
+                                  autofocus: true,
+                                  subtitle:Text(
+                                    snapshot.data.docs[index]["Content"],
+                                    style: TextStyle(
+                                        color: Colors.black87,
+                                        fontWeight: FontWeight.w800,
+                                        decorationThickness: 2.5,
+                                        //backgroundColor: Colors.white,
+                                        fontSize: 12,
+                                        //"pacifico"
+                                        fontFamily:"Merriweather" ),
+                                  ),
+                                  title: Text(
+                                    snapshot.data.docs[index]["Title"],
+                                    style: TextStyle(
+                                        color: CupertinoColors.black,
+                                        fontWeight: FontWeight.bold,
+                                        decorationThickness: 2.5,
+                                        //backgroundColor: Colors.white,
+                                        fontSize: 22,
+                                        fontFamily: "ZenTokyoZoo"),
+                                  ),
+                                ),
+                              ],
                             ),
-                            ListTile(
-                              autofocus: true,
-                              subtitle:Text(
-                                snapshot.data.docs[index-1]["Content"],
-                                style: TextStyle(
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.w800,
-                                    decorationThickness: 2.5,
-                                    //backgroundColor: Colors.white,
-                                    fontSize: 12,
-                                    //"pacifico"
-                                    fontFamily:"Merriweather" ),
-                              ),
-                              title: Text(
-                                snapshot.data.docs[index-1]["Title"],
-                                style: TextStyle(
-                                    color: CupertinoColors.black,
-                                    fontWeight: FontWeight.bold,
-                                    decorationThickness: 2.5,
-                                    //backgroundColor: Colors.white,
-                                    fontSize: 22,
-                                    fontFamily: "ZenTokyoZoo"),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     );
-                  },
-                );
-              }),
+                  }),
+            ),
+          ],
         ),
       ),
     );
@@ -297,7 +315,6 @@ class _profile_ScreenState extends State<profile_Screen>
                             );
   }
 }
-
 
 
 /*
@@ -600,7 +617,6 @@ class _profile_ScreenState extends State<profile_Screen>
                             );
   }
 }
-
 
 
 
