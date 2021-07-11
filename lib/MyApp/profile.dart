@@ -29,6 +29,9 @@ class _profile_ScreenState extends State<profile_Screen>
   Duration dur = Duration(milliseconds: 500);
   List checkBoxValue = [];
   String storing, changer = "";
+
+  Color primaryColor = Colors.black;
+
   @override
   void initState() {
     FirebaseFirestore.instance
@@ -139,7 +142,7 @@ class _profile_ScreenState extends State<profile_Screen>
             )
           ],
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: primaryColor,
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.cyanAccent,
           highlightElevation: 20,
@@ -162,10 +165,11 @@ class _profile_ScreenState extends State<profile_Screen>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Icon(Icons.search_rounded,color: CupertinoColors.black,),
+                      Icon(Icons.search_rounded,color: CupertinoColors.black,size: 25,),
                       Text("Search with Title Name",style: TextStyle(
-                        color: Colors.black,
+                        color: primaryColor,
                         fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),)
                     ],
                   ),
@@ -173,13 +177,13 @@ class _profile_ScreenState extends State<profile_Screen>
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.grey,
                   ),
-                  height: 40,
+                  height: 45,
                   width: MediaQuery.of(context).size.width,
                 ),
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 40),
+              margin: EdgeInsets.only(top: 45),
               decoration: BoxDecoration(
                   image: DecorationImage(image: NetworkImage("https://i.pinimg.com/564x/02/c3/4b/02c34bd8761d9c04596bf4434359458e.jpg"),fit: BoxFit.cover)
               ),
@@ -224,7 +228,7 @@ class _profile_ScreenState extends State<profile_Screen>
                                     left: MediaQuery.of(context).size.width/50,
                                     child: Text(snapshot.data.docs[index]["Time"].toString().substring(0,16),style: TextStyle(
                                       fontSize: 15,
-                                      color: Colors.black,
+                                      color: primaryColor,
                                       fontWeight: FontWeight.bold
                                     ),)
                                 ),
@@ -458,7 +462,7 @@ class _profile_ScreenState extends State<profile_Screen>
             )
           ],
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: primaryColor,
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.cyanAccent,
           highlightElevation: 20,
@@ -490,7 +494,7 @@ class _profile_ScreenState extends State<profile_Screen>
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                            color: Colors.black,
+                            color: primaryColor,
                             border: Border.all(color: Colors.cyanAccent,width: 2.5),
                             //color: Colors.yellow[200],
                             borderRadius: BorderRadius.circular(10)
@@ -528,7 +532,7 @@ class _profile_ScreenState extends State<profile_Screen>
                                 left: MediaQuery.of(context).size.width/50,
                                 child: Text(snapshot.data.docs[index-1]["Time"].toString().substring(0,16),style: TextStyle(
                                   fontSize: 15,
-                                  color: Colors.black,
+                                  color: primaryColor,
                                   fontWeight: FontWeight.bold
                                 ),)
                             ),
