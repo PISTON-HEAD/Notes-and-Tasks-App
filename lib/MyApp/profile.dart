@@ -227,7 +227,7 @@ class _profile_ScreenState extends State<profile_Screen>
                                   top: MediaQuery.of(context).size.height/4.85,
                                     left: MediaQuery.of(context).size.width/50,
                                     child: Text(snapshot.data.docs[index]["Time"].toString().substring(0,16),style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 11,
                                       color: primaryColor,
                                       fontWeight: FontWeight.bold
                                     ),)
@@ -246,28 +246,31 @@ class _profile_ScreenState extends State<profile_Screen>
                                     },
                                   )
                                 ),
-                                ListTile(
-                                  autofocus: true,
-                                  subtitle:Text(
-                                    snapshot.data.docs[index]["Content"],
-                                    style: TextStyle(
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.w800,
-                                        decorationThickness: 2.5,
-                                        //backgroundColor: Colors.white,
-                                        fontSize: 12,
-                                        //"pacifico"
-                                        fontFamily:"Merriweather" ),
-                                  ),
-                                  title: Text(
-                                    snapshot.data.docs[index]["Title"],
-                                    style: TextStyle(
-                                        color: CupertinoColors.black,
-                                        fontWeight: FontWeight.bold,
-                                        decorationThickness: 2.5,
-                                        //backgroundColor: Colors.white,
-                                        fontSize: 22,
-                                        fontFamily: "ZenTokyoZoo"),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom:80.0),
+                                  child: ListTile(
+                                    autofocus: true,
+                                    subtitle:Text(
+                                      snapshot.data.docs[index]["Content"],
+                                      style: TextStyle(
+                                          color: Colors.black87,
+                                          fontWeight: FontWeight.w800,
+                                          decorationThickness: 2.5,
+                                          //backgroundColor: Colors.white,
+                                          fontSize: 12,
+                                          //"pacifico"
+                                          fontFamily:"Merriweather" ),
+                                    ),
+                                    title: Text(
+                                      snapshot.data.docs[index]["Title"],
+                                      style: TextStyle(
+                                          color: CupertinoColors.black,
+                                          fontWeight: FontWeight.bold,
+                                          decorationThickness: 2.5,
+                                          //backgroundColor: Colors.white,
+                                          fontSize: 22,
+                                          fontFamily: "ZenTokyoZoo"),
+                                    ),
                                   ),
                                 ),
                               ],

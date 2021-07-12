@@ -217,11 +217,12 @@ class _todoListCreationState extends State<todoListCreation> {
                 builder: (buildContext) {
                   return AlertDialog(
                     title: Text(
-                      "Enter ur list",
+                      "Enter your list",
                       style: appBar_Style,
                     ),
                     scrollable: true,
                     content: TextField(
+                      //onSubmitted: ,
                       autocorrect: true,
                       onChanged: (text) {
                         theList = text;
