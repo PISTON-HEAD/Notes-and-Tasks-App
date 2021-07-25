@@ -65,7 +65,7 @@ class _todoListCreationState extends State<todoListCreation> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "To Do List",
+                "Tasks",
                 style: appBar_Style,
               ),
               Row(
@@ -129,13 +129,17 @@ class _todoListCreationState extends State<todoListCreation> {
                             child: Container(
                                 decoration: BoxDecoration(
                                     color: Colors.black87,
-                                    border: Border.all(color: Colors.white60),
+                                    border: Border.all(color: Colors.cyanAccent,
+                                    width: 2,),
                                     borderRadius: BorderRadius.circular(10)),
                                 width: MediaQuery.of(context).size.width,
                                 child: ListTile(
                                    leading:checkBoxList==[] ? null:Checkbox(
+                                     side: BorderSide(
+                                       color: Colors.white,
+                                     ),
                                      autofocus: true,
-                                    activeColor: Colors.greenAccent,
+                                    activeColor: Colors.cyanAccent,
                                     splashRadius: 20,
                                     value: checkBoxList[index],
                                     onChanged: (value){
@@ -258,7 +262,7 @@ class _todoListCreationState extends State<todoListCreation> {
           highlightElevation: 20,
           autofocus: true,
           child: Icon(
-            FontAwesomeIcons.clipboardList,
+            FontAwesomeIcons.plus,
             color: Colors.black,
             size: 30,
           ),

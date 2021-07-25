@@ -127,21 +127,62 @@ class _profile_ScreenState extends State<profile_Screen>
           toolbarHeight: 85,
           elevation: 10,
           actions: [
-            IconButton(
+            PopupMenuButton(
+              color: CupertinoColors.systemTeal,
               icon: Icon(
-                FontAwesomeIcons.signOutAlt,
-                color: Colors.white,
+                Icons.more_vert_sharp,
+                color: Colors.white70,
+                size: 30,
               ),
-              onPressed: () async {
-                auth.signOut();
-                SharedPreferences shared =
-                    await SharedPreferences.getInstance();
-                print(shared.getString("LoggedIn"));
-                shared.setString("LoggedIn", "false");
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => SignIn_Page()));
+              onSelected: (value)async{
+                if (value == 0) {
+                  print("privacy policy");
+                } else if (value == 1) {
+                  print("About");
+                } else if (value == 2) {
+                  print("Log Out");
+                      auth.signOut();
+                      SharedPreferences shared =
+                          await SharedPreferences.getInstance();
+                      print(shared.getString("LoggedIn"));
+                      shared.setString("LoggedIn", "false");
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => SignIn_Page()));
+                }
               },
-            )
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("Privacy Policy"),
+                  value: 0,
+                ),
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("About"),
+                  value: 1,
+                ),
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("Log Out"),
+                  value: 2,
+                ),
+              ],
+            ),
+            // IconButton(
+            //   icon: Icon(
+            //     FontAwesomeIcons.signOutAlt,
+            //     color: Colors.white,
+            //   ),
+            //   onPressed: () async {
+            //     auth.signOut();
+            //     SharedPreferences shared =
+            //         await SharedPreferences.getInstance();
+            //     print(shared.getString("LoggedIn"));
+            //     shared.setString("LoggedIn", "false");
+            //     Navigator.pushReplacement(context,
+            //         MaterialPageRoute(builder: (context) => SignIn_Page()));
+            //   },
+            // )
           ],
         ),
         backgroundColor: primaryColor,
@@ -236,54 +277,36 @@ class _profile_ScreenState extends State<profile_Screen>
                                 borderRadius: BorderRadius.circular(10)),
                             //height: 180,
                             margin: EdgeInsets.all(10),
-                            child: Stack(
-                              children: [
-                                // Positioned(
-                                //   child: IconButton(
-                                //     icon: Icon(
-                                //       FontAwesomeIcons.trash,
-                                //       color: Color.fromARGB(255, 120, 122, 132),
-                                //     ),
-                                //     onPressed: () {
-                                //       buildShowDialog(context, snapshot, index);
-                                //     },
-                                //   ),
-                                //   height: MediaQuery.of(context).size.height/2.5,
-                                //   width:MediaQuery.of(context).size.height/2.5,
-                                // ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      bottom:
-                                          65.0), //here is the padding for content
-                                  child: ListTile(
-                                    autofocus: true,
-                                    subtitle: Text(
-                                      snapshot.data.docs[index]["Content"],
-                                      style: TextStyle(
-                                          color: Color.fromARGB(
-                                              255, 152, 151, 158),
-                                          fontWeight: FontWeight.w800,
-                                          decorationThickness: 2.5,
-                                          //backgroundColor: Colors.white,
-                                          fontSize: 12,
-                                          //"pacifico"
-                                          fontFamily: "Merriweather"),
-                                    ),
-
-                                    title: Text(
-                                      snapshot.data.docs[index]["Title"],
-                                      style: TextStyle(
-                                          color: Color.fromRGBO(
-                                              252, 252, 254, 0.7),
-                                          fontWeight: FontWeight.bold,
-                                          decorationThickness: 2.5,
-                                          //backgroundColor: Colors.white,
-                                          fontSize: 22,
-                                          fontFamily: "ZenTokyoZoo"),
-                                    ),
-                                  ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom:
+                                      85.0), //here is the padding for content
+                              child: ListTile(
+                                autofocus: true,
+                                subtitle: Text(
+                                  snapshot.data.docs[index]["Content"],
+                                  style: TextStyle(
+                                      color: Color.fromARGB(
+                                          255, 152, 151, 158),
+                                      fontWeight: FontWeight.w800,
+                                      decorationThickness: 2.5,
+                                      //backgroundColor: Colors.white,
+                                      fontSize: 12,
+                                      //"pacifico"
+                                      fontFamily: "Merriweather"),
                                 ),
-                              ],
+                                title: Text(
+                                  snapshot.data.docs[index]["Title"],
+                                  style: TextStyle(
+                                      color: Color.fromRGBO(
+                                          252, 252, 254, 0.7),
+                                      fontWeight: FontWeight.bold,
+                                      decorationThickness: 2.5,
+                                      //backgroundColor: Colors.white,
+                                      fontSize: 22,
+                                      fontFamily: "ZenTokyoZoo"),
+                                ),
+                              ),
                             ),
                           ),
                         );
@@ -294,6 +317,15 @@ class _profile_ScreenState extends State<profile_Screen>
           ],
         ),
       ),
+    );
+  }
+
+  TextStyle popStyle() {
+    return TextStyle(
+      fontWeight: FontWeight.w700,
+      fontFamily: "Acme",
+      fontSize: 15,
+      color: Colors.black87,
     );
   }
 
