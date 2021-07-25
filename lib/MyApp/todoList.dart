@@ -79,11 +79,11 @@ class _todoListCreationState extends State<todoListCreation> {
                       //Navigator.of(context).pop();
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => profile_Screen()));
                     },
-                    child: Icon(FontAwesomeIcons.stickyNote,color: Colors.grey,size: 30,),
+                    child: Icon(FontAwesomeIcons.stickyNote,color: Colors.grey,size: 28.8,),
                   ),
                   MaterialButton(
                     autofocus: true,
-                    child: Icon(FontAwesomeIcons.solidClipboard,color: Colors.limeAccent,size: 30,),
+                    child: Icon(FontAwesomeIcons.solidClipboard,color: Colors.limeAccent,size: 28.8,),
                     onPressed: () {}
                   ),
                 ],
@@ -188,7 +188,9 @@ class _todoListCreationState extends State<todoListCreation> {
                                           editingController = TextEditingController(text: inputList[index]);
                                           return AlertDialog(
                                             content: TextFormField(
-                                              maxLines: 3,
+                                              textInputAction: TextInputAction.newline,
+                                              keyboardType: TextInputType.multiline,
+                                              maxLines: null,
                                               controller:editingController,
                                               onChanged: (value){
                                                 theList = value;
@@ -258,7 +260,9 @@ class _todoListCreationState extends State<todoListCreation> {
                     ),
                     scrollable: true,
                     content: TextFormField(
-                      maxLines: 3,
+                      textInputAction: TextInputAction.newline,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
                       //onSubmitted: ,
                       autocorrect: true,
                       onChanged: (text) {
@@ -290,7 +294,7 @@ class _todoListCreationState extends State<todoListCreation> {
           autofocus: true,
           child: Icon(
             FontAwesomeIcons.plus,
-            color: Colors.black,
+            color: Colors.white,
             size: 30,
           ),
         ),

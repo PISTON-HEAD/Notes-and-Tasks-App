@@ -100,6 +100,7 @@ class searchTitle extends SearchDelegate<String> {
     return ListView.builder(
         itemCount: suggester.length,
         itemBuilder: (context, index) => ListTile(
+          autofocus: true,
               onTap: () {
                 FirebaseFirestore.instance
                     .collection("My Task")

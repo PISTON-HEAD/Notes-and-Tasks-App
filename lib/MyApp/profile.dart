@@ -81,7 +81,7 @@ class _profile_ScreenState extends State<profile_Screen>
                     child: Icon(
                       FontAwesomeIcons.stickyNote,
                       color: Colors.limeAccent,
-                      size: 30,
+                      size: 28.8,
                     ),
                   ),
                   MaterialButton(
@@ -89,7 +89,7 @@ class _profile_ScreenState extends State<profile_Screen>
                     child: Icon(
                       FontAwesomeIcons.solidClipboard,
                       color: Colors.grey,
-                      size: 30,
+                      size: 28.8,
                     ),
                     onPressed: () {
                       print("prophile page");
