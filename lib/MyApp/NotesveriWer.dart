@@ -16,6 +16,7 @@ class _SeeNoteState extends State<SeeNote> {
   final formKey = GlobalKey<FormState>();
   TextEditingController titleEditingController = TextEditingController();
   TextEditingController notesEditingController = TextEditingController();
+  TextEditingController timeEditingController = TextEditingController();
 
   TextStyle notesTitle(Color color , double size){
     return TextStyle(
@@ -30,6 +31,7 @@ class _SeeNoteState extends State<SeeNote> {
     widget.getDoc.reference.update({
       "Title":titleEditingController.text,
       "Content":notesEditingController.text,
+      "Time":DateTime.now().toString(),
     }).whenComplete(() => Navigator.of(context).pop());
   }
 
@@ -37,6 +39,7 @@ class _SeeNoteState extends State<SeeNote> {
   void initState() {
     titleEditingController = TextEditingController(text: widget.getDoc["Title"]);
     notesEditingController = TextEditingController(text:  widget.getDoc["Content"]);
+    timeEditingController = TextEditingController(text: widget.getDoc["Time"]);
     // TODO: implement initState
     super.initState();
   }
@@ -45,6 +48,10 @@ class _SeeNoteState extends State<SeeNote> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        title: Text("Edited on: ${timeEditingController.text.toString().substring(0,16)}",style: TextStyle(
+          fontSize: 15,
+        ),),
         actions: [
           IconButton(
             icon: Icon(Icons.call_missed_outgoing_rounded),

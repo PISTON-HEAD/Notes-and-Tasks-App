@@ -157,7 +157,8 @@ class _todoListCreationState extends State<todoListCreation> {
                                           editingController = TextEditingController(text: inputList[index]);
                                           return AlertDialog(
                                             title: Text("Edit your text"),
-                                            content: TextField(
+                                            content: TextFormField(
+                                              maxLines: 3,
                                               controller:editingController,
                                               onChanged: (value){
                                                 theList = value;
@@ -217,11 +218,16 @@ class _todoListCreationState extends State<todoListCreation> {
                 builder: (buildContext) {
                   return AlertDialog(
                     title: Text(
-                      "Enter your list",
-                      style: appBar_Style,
+                      "Enter the task",
+                      style: TextStyle(
+                        fontFamily: "Acme",
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     scrollable: true,
-                    content: TextField(
+                    content: TextFormField(
+                      maxLines: 3,
                       //onSubmitted: ,
                       autocorrect: true,
                       onChanged: (text) {
@@ -230,7 +236,8 @@ class _todoListCreationState extends State<todoListCreation> {
                     ),
                     actions: [
                       MaterialButton(
-                        child: Text("pop"),
+                        color: Colors.grey,
+                        child: Text("Save",style: TextStyle(),),
                         onPressed: () {
                           if(theList==""){
                             theList="";
@@ -265,14 +272,17 @@ class _todoListCreationState extends State<todoListCreation> {
 
 
 
- /*
+/*
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:recipe_club/widgets/customWidgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
+import 'package:to_do_list/MyApp/profile.dart';
+import 'package:to_do_list/widgets/customWidgets.dart';
 
 class todoListCreation extends StatefulWidget {
   final getterList;
@@ -285,7 +295,7 @@ class todoListCreation extends StatefulWidget {
 
 class _todoListCreationState extends State<todoListCreation> {
   TextEditingController editingController = new TextEditingController();
-
+  String ownerName;
   List inputList = [];
   String theList = "";
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -324,8 +334,57 @@ class _todoListCreationState extends State<todoListCreation> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: appBar_Main(
-            context, "ToDo List", Colors.teal), //u normally do the appbar
+        appBar: AppBar(
+          centerTitle: true,
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "To Do List",
+                style: appBar_Style,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width/5.5,
+                  ),
+                  MaterialButton(
+                    onPressed: (){
+                      //Navigator.of(context).pop();
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => profile_Screen()));
+                    },
+                    child: Icon(FontAwesomeIcons.stickyNote,color: Colors.grey,size: 30,),
+                  ),
+                  MaterialButton(
+                    autofocus: true,
+                    child: Icon(FontAwesomeIcons.solidClipboard,color: Colors.limeAccent,size: 30,),
+                    onPressed: () {}
+                  ),
+                ],
+              ),
+            ],
+          ),
+          backgroundColor: CupertinoColors.black,
+          toolbarHeight: 85,
+          elevation: 10,
+          actions: [
+            IconButton(
+              icon: Icon(
+                FontAwesomeIcons.signOutAlt,
+                color: Colors.white,
+              ),
+              onPressed: () async {
+                auth.signOut();
+                SharedPreferences shared = await SharedPreferences.getInstance();
+                print(shared.getString("LoggedIn"));
+                shared.setString("LoggedIn", "false");
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => SignIn_Page()));
+              },
+            )
+          ],
+        ), //u normally do the appbar
             backgroundColor: CupertinoColors.label,
         body: inputList == null
             ? Container()
@@ -372,7 +431,9 @@ class _todoListCreationState extends State<todoListCreation> {
                                         builder: (BuildContext context) {
                                           editingController = TextEditingController(text: inputList[index]);
                                           return AlertDialog(
-                                            content: TextField(
+                                            title: Text("Edit your text"),
+                                            content: TextFormField(
+                                              maxLines: 3,
                                               controller:editingController,
                                               onChanged: (value){
                                                 theList = value;
@@ -432,11 +493,17 @@ class _todoListCreationState extends State<todoListCreation> {
                 builder: (buildContext) {
                   return AlertDialog(
                     title: Text(
-                      "Enter ur list",
-                      style: appBar_Style,
+                      "Enter the task",
+                      style: TextStyle(
+                        fontFamily: "Acme",
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     scrollable: true,
-                    content: TextField(
+                    content: TextFormField(
+                      maxLines: 3,
+                      //onSubmitted: ,
                       autocorrect: true,
                       onChanged: (text) {
                         theList = text;
@@ -444,14 +511,17 @@ class _todoListCreationState extends State<todoListCreation> {
                     ),
                     actions: [
                       MaterialButton(
-                        child: Text("pop"),
+                        color: Colors.grey,
+                        child: Text("Save",style: TextStyle(),),
                         onPressed: () {
-                          setState(() {
+                          if(theList==""){
+                            theList="";
+                          }else{setState(() {
                             inputList.add(theList);
                             theList = "";
                             checkBoxList.add(false);
                             taskMaker();
-                          });
+                          });}
                           Navigator.of(context).pop();
                         },
                       ),
@@ -463,9 +533,9 @@ class _todoListCreationState extends State<todoListCreation> {
           highlightElevation: 20,
           autofocus: true,
           child: Icon(
-            Icons.add,
+            FontAwesomeIcons.clipboardList,
             color: Colors.black,
-            size: 35,
+            size: 30,
           ),
         ),
       ),
