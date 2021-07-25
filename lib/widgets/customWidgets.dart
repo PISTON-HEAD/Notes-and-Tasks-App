@@ -14,6 +14,16 @@ Widget appBar_Main(BuildContext context , String appBarName, Color appBarColor){
   );
 }
 
+
+TextStyle popStyle() {
+  return TextStyle(
+    fontWeight: FontWeight.w700,
+    fontFamily: "Acme",
+    fontSize: 15,
+    color: Colors.black87,
+  );
+}
+
 TextStyle appBar_Style = TextStyle(
   fontSize: 31,
   fontWeight: FontWeight.bold,

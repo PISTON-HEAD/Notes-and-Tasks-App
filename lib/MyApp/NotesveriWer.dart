@@ -48,9 +48,11 @@ class _SeeNoteState extends State<SeeNote> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.cyanAccent,
         centerTitle: true,
         title: Text("Edited on: ${timeEditingController.text.toString().substring(0,16)}",style: TextStyle(
-          fontSize: 15,
+          fontSize: 15.5,
+          color: Colors.black,
         ),),
         actions: [
           IconButton(

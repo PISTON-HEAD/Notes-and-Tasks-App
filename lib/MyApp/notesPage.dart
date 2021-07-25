@@ -41,6 +41,7 @@ uploader()async{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.cyanAccent,
         actions: [
           IconButton(
           icon: Icon(Icons.call_missed_outgoing_rounded),

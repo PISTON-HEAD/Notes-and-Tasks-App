@@ -280,7 +280,7 @@ class _profile_ScreenState extends State<profile_Screen>
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   bottom:
-                                      85.0), //here is the padding for content
+                                      70.0), //here is the padding for content
                               child: ListTile(
                                 autofocus: true,
                                 subtitle: Text(
@@ -320,14 +320,7 @@ class _profile_ScreenState extends State<profile_Screen>
     );
   }
 
-  TextStyle popStyle() {
-    return TextStyle(
-      fontWeight: FontWeight.w700,
-      fontFamily: "Acme",
-      fontSize: 15,
-      color: Colors.black87,
-    );
-  }
+
 
   Future buildShowDialog(BuildContext context,
       AsyncSnapshot<QuerySnapshot<Object>> snapshot, int index) {

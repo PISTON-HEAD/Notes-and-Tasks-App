@@ -94,20 +94,47 @@ class _todoListCreationState extends State<todoListCreation> {
           toolbarHeight: 85,
           elevation: 10,
           actions: [
-            IconButton(
+            PopupMenuButton(
+              color: CupertinoColors.systemTeal,
               icon: Icon(
-                FontAwesomeIcons.signOutAlt,
-                color: Colors.white,
+                Icons.more_vert_sharp,
+                color: Colors.white70,
+                size: 30,
               ),
-              onPressed: () async {
-                auth.signOut();
-                SharedPreferences shared = await SharedPreferences.getInstance();
-                print(shared.getString("LoggedIn"));
-                shared.setString("LoggedIn", "false");
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => SignIn_Page()));
+              onSelected: (value)async{
+                if (value == 0) {
+                  print("privacy policy");
+                } else if (value == 1) {
+                  print("About");
+                } else if (value == 2) {
+                  print("Log Out");
+                  auth.signOut();
+                  SharedPreferences shared =
+                  await SharedPreferences.getInstance();
+                  print(shared.getString("LoggedIn"));
+                  shared.setString("LoggedIn", "false");
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => SignIn_Page()));
+                }
               },
-            )
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("Privacy Policy"),
+                  value: 0,
+                ),
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("About"),
+                  value: 1,
+                ),
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("Log Out"),
+                  value: 2,
+                ),
+              ],
+            ),
           ],
         ), //u normally do the appbar
             backgroundColor: CupertinoColors.label,
@@ -160,7 +187,6 @@ class _todoListCreationState extends State<todoListCreation> {
                                         builder: (BuildContext context) {
                                           editingController = TextEditingController(text: inputList[index]);
                                           return AlertDialog(
-                                            title: Text("Edit your text"),
                                             content: TextFormField(
                                               maxLines: 3,
                                               controller:editingController,
@@ -170,7 +196,8 @@ class _todoListCreationState extends State<todoListCreation> {
                                             ),
                                             actions: [
                                               MaterialButton(
-                                                child: Text("pop"),
+                                                child: Text("Save"),
+                                                color: Colors.cyanAccent,
                                                 onPressed: () {
                                                   setState(() {
                                                     if(theList.length != 0){
@@ -240,7 +267,7 @@ class _todoListCreationState extends State<todoListCreation> {
                     ),
                     actions: [
                       MaterialButton(
-                        color: Colors.grey,
+                        color: Colors.cyanAccent,
                         child: Text("Save",style: TextStyle(),),
                         onPressed: () {
                           if(theList==""){
