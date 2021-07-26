@@ -61,35 +61,41 @@ class searchTitle extends SearchDelegate<String> {
     bool contain = false;
 
     print(result);
-    if(allTitles.contains(result) && single == true){
+    if (allTitles.contains(result) && single == true) {
       contain = true;
       single = false;
       print("Contains Title:$result");
-      FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).collection("Notes").get().then((value){
-        for(int i = 0; i<value.docs.length;i++){
-          if(result.toString() == value.docs[i]["Title"].toString()){
+      FirebaseFirestore.instance
+          .collection("My Task")
+          .doc(auth.currentUser.uid)
+          .collection("Notes")
+          .get()
+          .then((value) {
+        for (int i = 0; i < value.docs.length; i++) {
+          if (result.toString() == value.docs[i]["Title"].toString()) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => SeeNote(
-                      getDoc: value.docs[i],
-                    )));
+                          getDoc: value.docs[i],
+                        )));
           }
         }
       });
-    }else{
+    } else {
       print("No result");
     }
 
-    return contain ?Container() :Container(
-      child: Center(
-        child: Text("No results found!"
-            "",style: TextStyle(
-          color: Colors.black54,
-          fontSize: 20
-        )),
-      ),
-    );
+    return contain
+        ? Container()
+        : Container(
+            child: Center(
+              child: Text(
+                  "No results found!"
+                  "",
+                  style: TextStyle(color: Colors.black54, fontSize: 20)),
+            ),
+          );
   }
 
   @override
@@ -100,7 +106,7 @@ class searchTitle extends SearchDelegate<String> {
     return ListView.builder(
         itemCount: suggester.length,
         itemBuilder: (context, index) => ListTile(
-          autofocus: true,
+              autofocus: true,
               onTap: () {
                 FirebaseFirestore.instance
                     .collection("My Task")
@@ -138,13 +144,11 @@ class searchTitle extends SearchDelegate<String> {
                           style: TextStyle(
                             color: Colors.black54,
                           )),
-                    ]
-                ),
+                    ]),
               ),
             ));
   }
 }
-
 
 /*
 import 'package:cloud_firestore/cloud_firestore.dart';

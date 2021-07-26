@@ -168,21 +168,6 @@ class _profile_ScreenState extends State<profile_Screen>
                 ),
               ],
             ),
-            // IconButton(
-            //   icon: Icon(
-            //     FontAwesomeIcons.signOutAlt,
-            //     color: Colors.white,
-            //   ),
-            //   onPressed: () async {
-            //     auth.signOut();
-            //     SharedPreferences shared =
-            //         await SharedPreferences.getInstance();
-            //     print(shared.getString("LoggedIn"));
-            //     shared.setString("LoggedIn", "false");
-            //     Navigator.pushReplacement(context,
-            //         MaterialPageRoute(builder: (context) => SignIn_Page()));
-            //   },
-            // )
           ],
         ),
         backgroundColor: primaryColor,
@@ -231,7 +216,7 @@ class _profile_ScreenState extends State<profile_Screen>
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: Colors.grey,
-                      border: Border.all(color: Colors.blueGrey, width: 3)),
+                      border: Border.all(color: Colors.cyanAccent, width: 3)),
                   height: 45,
                   width: MediaQuery.of(context).size.width,
                 ),
@@ -239,9 +224,12 @@ class _profile_ScreenState extends State<profile_Screen>
             ),
             Container(
               margin: EdgeInsets.only(top: 45),
-              // decoration: BoxDecoration(
-              //     image: DecorationImage(image: NetworkImage("https://i.pinimg.com/564x/02/c3/4b/02c34bd8761d9c04596bf4434359458e.jpg"),fit: BoxFit.cover)
-              // ),
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage("https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",),fit: BoxFit.cover,)
+                      //https://cdn.wallpapersafari.com/5/69/ZFWaoE.jpg
+                      //https://img.freepik.com/free-photo/old-black-background-grunge-texture-dark-wallpaper-blackboard-chalkboard-room-wall_1258-28313.jpg?size=626&ext=jpg
+              ),
               child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection("My Task")
