@@ -305,7 +305,7 @@ class _todoListCreationState extends State<todoListCreation> {
                       textInputAction: TextInputAction.newline,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
-                      //onSubmitted: ,
+                      autofocus: true,
                       autocorrect: true,
                       onChanged: (text) {
                         theList = text;
