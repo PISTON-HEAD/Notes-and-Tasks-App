@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:to_do_list/widgets/customWidgets.dart';
 
@@ -62,6 +63,10 @@ uploader()async{
               Form(
                 key: formKey,
                 child: Container(
+                  padding: EdgeInsets.only(left: 5),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.cyanAccent,width: 2),
+                  ),
                   child: TextFormField(
                     autocorrect: true,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -89,17 +94,25 @@ uploader()async{
                   ),
                 ),
               ),
-              TextFormField(
-                controller: notesEditingController,
-                decoration: InputDecoration(
-                  hintText: "Content",
-                  hintStyle: notesTitle(Colors.white, 20),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.only(left: 5),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.cyanAccent
+                      ,width: 2),
                 ),
-                textInputAction: TextInputAction.newline,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                style: customStyle(Colors.white, 20, FontWeight.w600, ""),
-                textDirection: TextDirection.ltr,
+                child: TextFormField(
+                  controller: notesEditingController,
+                  decoration: InputDecoration(
+                    hintText: "Content",
+                    hintStyle: notesTitle(Colors.white70, 20),
+                  ),
+                  textInputAction: TextInputAction.newline,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  style: customStyle(Colors.white, 20, FontWeight.w600, ""),
+                  textDirection: TextDirection.ltr,
+                ),
               ),
             ],
           ),

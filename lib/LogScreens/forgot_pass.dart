@@ -84,7 +84,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                  });
                 }, child: Text("Verify Email",style:TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.w700,
+                  fontFamily: "Merriweather",
+                  fontWeight: FontWeight.w900,
+                  fontSize: 16.5,
                 ),)),
               )
             ],

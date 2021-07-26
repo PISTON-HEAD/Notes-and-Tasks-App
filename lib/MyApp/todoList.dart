@@ -188,6 +188,7 @@ class _todoListCreationState extends State<todoListCreation> {
                                           editingController = TextEditingController(text: inputList[index]);
                                           return AlertDialog(
                                             content: TextFormField(
+                                              autofocus: true,
                                               textInputAction: TextInputAction.newline,
                                               keyboardType: TextInputType.multiline,
                                               maxLines: null,

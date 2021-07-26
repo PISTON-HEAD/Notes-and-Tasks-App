@@ -48,7 +48,8 @@ class _SeeNoteState extends State<SeeNote> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.cyanAccent,
+        toolbarOpacity: 1,
+        backgroundColor: Colors.cyanAccent.shade700,
         centerTitle: true,
         title: Text("Edited on: ${timeEditingController.text.toString().substring(0,16)}",style: TextStyle(
           fontSize: 15.5,
@@ -74,6 +75,10 @@ class _SeeNoteState extends State<SeeNote> {
               Form(
                 key: formKey,
                 child: Container(
+                  padding: EdgeInsets.only(left: 5),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.cyanAccent,width: 2),
+                  ),
                   child: TextFormField(
                     maxLines: 1,
                     autocorrect: true,
@@ -102,17 +107,24 @@ class _SeeNoteState extends State<SeeNote> {
                   ),
                 ),
               ),
-              TextFormField(
-                controller: notesEditingController,
-                decoration: InputDecoration(
-                  hintText: "Content",
-                  hintStyle: notesTitle(Colors.white, 20),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.only(left: 5),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.cyanAccent,width: 2),
                 ),
-                textInputAction: TextInputAction.newline,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                style: customStyle(Colors.white, 20, FontWeight.w600, ""),
-                textDirection: TextDirection.ltr,
+                child: TextFormField(
+                  controller: notesEditingController,
+                  decoration: InputDecoration(
+                    hintText: "Content",
+                    hintStyle: notesTitle(Colors.white, 20),
+                  ),
+                  textInputAction: TextInputAction.newline,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  style: customStyle(Colors.white, 20, FontWeight.w600, ""),
+                  textDirection: TextDirection.ltr,
+                ),
               ),
             ],
           ),
