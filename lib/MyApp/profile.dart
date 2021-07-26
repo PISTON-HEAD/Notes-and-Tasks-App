@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
 import 'package:to_do_list/LogScreens/titleSearcher.dart';
+import 'package:to_do_list/MyApp/aboutTheApp.dart';
 import 'package:to_do_list/MyApp/todoList.dart';
 import 'package:to_do_list/widgets/customWidgets.dart';
 import 'NotesveriWer.dart';
@@ -136,10 +137,12 @@ class _profile_ScreenState extends State<profile_Screen>
               ),
               onSelected: (value)async{
                 if (value == 0) {
-                  print("privacy policy");
+                  print("About App");
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AppInfo(value:value)));
                 } else if (value == 1) {
-                  print("About");
-                } else if (value == 2) {
+                  print("About Developers");
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AppInfo(value:value)));
+                } else if (value == 3) {
                   print("Log Out");
                       auth.signOut();
                       SharedPreferences shared =
@@ -149,22 +152,31 @@ class _profile_ScreenState extends State<profile_Screen>
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) => SignIn_Page()));
                 }
+                else if(value == 2){
+                  print("Privacy Policy");
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AppInfo(value:value)));
+                }
               },
               itemBuilder: (context) => [
                 PopupMenuItem(
                   textStyle: popStyle(),
-                  child: Text("Privacy Policy"),
+                  child: Text("About App"),
                   value: 0,
                 ),
                 PopupMenuItem(
                   textStyle: popStyle(),
-                  child: Text("About"),
+                  child: Text("About Developers"),
                   value: 1,
                 ),
                 PopupMenuItem(
                   textStyle: popStyle(),
-                  child: Text("Log Out"),
+                  child: Text("Privacy Policy"),
                   value: 2,
+                ),
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("Log Out"),
+                  value: 3,
                 ),
               ],
             ),

@@ -42,10 +42,14 @@ uploader()async{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.cyanAccent,
+        backgroundColor: Colors.blueGrey,
         actions: [
-          IconButton(
-          icon: Icon(Icons.call_missed_outgoing_rounded),
+          TextButton(
+            child: Text("Save",style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Colors.white
+            ),),
             onPressed: (){
             if(formKey.currentState.validate()){
               print("Title Name: ${titleEditingController.text}");

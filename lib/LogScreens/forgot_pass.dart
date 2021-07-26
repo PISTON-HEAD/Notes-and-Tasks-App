@@ -65,7 +65,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 ),
               ),
               SizedBox(height: 15,),
-              Text("An appropriate message for sending an password changing.",style: TextStyle(
+              Text("A password reset link will be sent immediately to your email id, when you click on the reset link button.",style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w700,
               ),),
@@ -82,7 +82,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                      Navigator.of(context).pop();
                    });
                  });
-                }, child: Text("Verify Email",style:TextStyle(
+                }, child: Text("Send reset link",style:TextStyle(
                   color: Colors.white,
                   fontFamily: "Merriweather",
                   fontWeight: FontWeight.w900,

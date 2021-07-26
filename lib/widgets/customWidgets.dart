@@ -25,7 +25,7 @@ TextStyle popStyle() {
 }
 
 TextStyle appBar_Style = TextStyle(
-  fontSize: 31,
+  fontSize: 26,
   fontWeight: FontWeight.bold,
   fontFamily: "Cinzel",//"Pacifico",
   letterSpacing: 1,

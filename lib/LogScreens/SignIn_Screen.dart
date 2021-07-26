@@ -85,7 +85,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
               .collection("Ordinary_Users")
               .doc(firebaseAuth.currentUser.uid)
               .update({
-            "password": passwordController.text,
+            "Password": passwordController.text,
           });
           // setState(() {
           //   loader = false;
@@ -106,7 +106,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: appBar_Main(context, "no name yet", Colors.black),
+        appBar: appBar_Main(context, "Notes and Task Pro", Colors.black),
         backgroundColor: primaryColor,
         body: SingleChildScrollView(
           child: Container(
@@ -146,9 +146,8 @@ class _SignIn_PageState extends State<SignIn_Page> {
                   ),
                   Text(
                     switcher == true
-                        ? "Create your account by providing the respective credential required"
-                            " to start your search or advertise your own food secrets."
-                        : "  Enter your respective credentials to SignIn to your account  ",
+                        ? "If You are a new user, Create your account by entering your email and a password"
+                        : "  Enter your account email and password to SignIn to your account  ",
                     style: customStyle(
                         Colors.lightGreen, 17, FontWeight.w600, "Acme"),
                     textAlign: TextAlign.center,
@@ -303,7 +302,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
                                     controller: confirmPassController,
                                     style: textFieldStyle,
                                     decoration: textInputDecoration(
-                                        "password conirmation",
+                                        "password confirmation",
                                         Icons.admin_panel_settings_rounded),
                                   ),
                                 )
@@ -347,27 +346,27 @@ class _SignIn_PageState extends State<SignIn_Page> {
                             height: 3,
                           ),
                           //google
-                          MaterialButton(
-                              color: Colors.lightBlueAccent,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    FontAwesomeIcons.google,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    "SignIn",
-                                    style: buttonStyle(Colors.white),
-                                  ),
-                                ],
-                              ),
-                              onPressed: () {
-                                print("google Signing...");
-                              }),
+                          // MaterialButton(
+                          //     color: Colors.lightBlueAccent,
+                          //     child: Row(
+                          //       mainAxisAlignment: MainAxisAlignment.center,
+                          //       children: [
+                          //         Icon(
+                          //           FontAwesomeIcons.google,
+                          //           color: Colors.white,
+                          //         ),
+                          //         SizedBox(
+                          //           width: 5,
+                          //         ),
+                          //         Text(
+                          //           "SignIn",
+                          //           style: buttonStyle(Colors.white),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //     onPressed: () {
+                          //       print("google Signing...");
+                          //     }),
                           SizedBox(
                             height: 5,
                           ),
