@@ -42,12 +42,10 @@ class _profile_ScreenState extends State<profile_Screen>
         .doc(auth.currentUser.uid)
         .get()
         .then((value) {
-      print("This is the list on server in screen 1: ${value["Task List"]}");
       getter = value["Task List"];
       checkBoxValue = value["Checker"];
       print("The inputList ater  server in screen 1:  $getter");
     });
-    //to get the current users name on appBar
     super.initState();
     _controller = AnimationController(vsync: this);
   }
@@ -65,18 +63,14 @@ class _profile_ScreenState extends State<profile_Screen>
         appBar: AppBar(
           centerTitle: true,
           title: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 "Notes",
                 style: appBar_Style,
               ),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 5.5,
-                  ),
                   MaterialButton(
                     onPressed: () {},
                     child: Icon(
@@ -271,7 +265,6 @@ class _profile_ScreenState extends State<profile_Screen>
                                 color: Color.fromARGB(255, 28, 28, 30),
                                 border: Border.all(
                                     color: Colors.cyanAccent, width: 2.5),
-                                //color: Colors.yellow[200],
                                 borderRadius: BorderRadius.circular(10)),
                             //height: 180,
                             margin: EdgeInsets.all(10),
@@ -288,9 +281,7 @@ class _profile_ScreenState extends State<profile_Screen>
                                           255, 152, 151, 158),
                                       fontWeight: FontWeight.w800,
                                       decorationThickness: 2.5,
-                                      //backgroundColor: Colors.white,
                                       fontSize: 12,
-                                      //"pacifico"
                                       fontFamily: "Merriweather"),
                                 ),
                                 title: Text(
@@ -300,7 +291,6 @@ class _profile_ScreenState extends State<profile_Screen>
                                           252, 252, 254, 0.7),
                                       fontWeight: FontWeight.bold,
                                       decorationThickness: 2.5,
-                                      //backgroundColor: Colors.white,
                                       fontSize: 22,
                                       fontFamily: "ZenTokyoZoo"),
                                 ),

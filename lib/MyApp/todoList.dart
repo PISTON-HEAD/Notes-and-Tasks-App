@@ -75,18 +75,14 @@ class _todoListCreationState extends State<todoListCreation> {
         appBar: AppBar(
           centerTitle: true,
           title: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 "Tasks",
                 style: appBar_Style,
               ),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 5.5,
-                  ),
                   MaterialButton(
                     onPressed: () {
                       //Navigator.of(context).pop();
