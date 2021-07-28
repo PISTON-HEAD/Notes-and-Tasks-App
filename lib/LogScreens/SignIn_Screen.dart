@@ -86,6 +86,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
               .doc(firebaseAuth.currentUser.uid)
               .update({
             "Password": passwordController.text,
+            "Last SignedIn":DateTime.now(),
           });
           // setState(() {
           //   loader = false;

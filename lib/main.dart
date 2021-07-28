@@ -1,6 +1,8 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:to_do_list/LogScreens/taskSearcher.dart';
 import 'LogScreens/SignIn_Screen.dart';
 import 'MyApp/profile.dart';
 
@@ -23,11 +25,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'To Do List',
+      title: 'Notes And Task Pro',
       debugShowCheckedModeBanner:false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home: SignIn_Page(),
     );
   }
@@ -39,7 +38,29 @@ class SignedInApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Notes And Task Pro',
+      debugShowCheckedModeBanner:false,
       home: profile_Screen(),
     );
   }
 }
+
+// class ScreenSplash extends StatefulWidget {
+//
+//   @override
+//   _ScreenSplashState createState() => _ScreenSplashState();
+// }
+//
+// class _ScreenSplashState extends State<ScreenSplash> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return AnimatedSplashScreen(
+//       nextScreen: profile_Screen(),
+//       splashTransition: SplashTransition.rotationTransition,
+//       splash: Icon(Icons.article_outlined),
+//       centered: true,
+//       animationDuration: Duration(seconds: 2),
+//       splashIconSize: 25,
+//     );
+//   }
+// }
