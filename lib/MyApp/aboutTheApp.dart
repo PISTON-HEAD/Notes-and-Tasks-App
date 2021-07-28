@@ -65,7 +65,7 @@ The notes and tasks you create will not occupy space in your device and it will 
 
 As this app has the feature to link all notes and tasks of the user to their account, you can use this app in multiple devices and you can access all your notes and tasks in all devices.
 
-There is a signup option with the app and also a google signup for ease of login.
+There is a signup option with the app.
 If you forget the password to your account, we have a sophisticated and secured procedure in the forgot password option to send you an email with the link to the new password.
 
 User can edit any note or task any number of times and the timestamp will show the date and time of the latest edit.

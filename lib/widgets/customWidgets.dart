@@ -25,7 +25,7 @@ TextStyle popStyle() {
 }
 
 TextStyle appBar_Style = TextStyle(
-  fontSize: 26,
+  fontSize: 25,
   fontWeight: FontWeight.bold,
   fontFamily: "Cinzel",//"Pacifico",
   letterSpacing: 1,
@@ -62,13 +62,6 @@ InputDecoration textInputDecoration(String hintText , IconData iconData) {
 }
 
 
-//
-// Color textButtonColor;
-// TextStyle buttonStyle = TextStyle(
-//   color: textButtonColor,
-//   fontSize: 18,
-//   fontFamily: "Merriweather"
-// );
 
 
 TextStyle buttonStyle(Color textColor){

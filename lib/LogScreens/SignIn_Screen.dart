@@ -345,28 +345,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
                           SizedBox(
                             height: 3,
                           ),
-                          //google
-                          // MaterialButton(
-                          //     color: Colors.lightBlueAccent,
-                          //     child: Row(
-                          //       mainAxisAlignment: MainAxisAlignment.center,
-                          //       children: [
-                          //         Icon(
-                          //           FontAwesomeIcons.google,
-                          //           color: Colors.white,
-                          //         ),
-                          //         SizedBox(
-                          //           width: 5,
-                          //         ),
-                          //         Text(
-                          //           "SignIn",
-                          //           style: buttonStyle(Colors.white),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //     onPressed: () {
-                          //       print("google Signing...");
-                          //     }),
+
                           SizedBox(
                             height: 5,
                           ),
