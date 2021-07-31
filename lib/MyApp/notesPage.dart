@@ -73,6 +73,7 @@ uploader()async{
                   ),
                   child: TextFormField(
                     autocorrect: true,
+                    autofocus: true,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value){
                       return value.length==0?"Enter a title":null;

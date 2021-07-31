@@ -196,9 +196,7 @@ class _todoListCreationState extends State<todoListCreation> {
                     "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",
                   ),
                   fit: BoxFit.cover,
-                )
-                    //https://cdn.wallpapersafari.com/5/69/ZFWaoE.jpg
-                    //https://img.freepik.com/free-photo/old-black-background-grunge-texture-dark-wallpaper-blackboard-chalkboard-room-wall_1258-28313.jpg?size=626&ext=jpg
+                ),
                     ),
                 child: ListView.builder(
                   addAutomaticKeepAlives: false,
