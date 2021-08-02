@@ -58,10 +58,14 @@ class _todoListCreationState extends State<todoListCreation> {
         "channelId", "channelName", "channelDescription",
         importance: Importance.max,
         playSound: true,
+        enableVibration: true,
+        icon: "icon",
+        showWhen: true,
         priority: Priority.high,
         ticker: "ticker");
     var iosDetails = IOSNotificationDetails();
     var platform = NotificationDetails(android: androidDetails,iOS: iosDetails,);
+    //neeed to do something abt it
     await notificationsPlugin.schedule(0, "Task Reminder", "$task", dateTimeChoosed, platform);
 
   }
@@ -95,7 +99,6 @@ class _todoListCreationState extends State<todoListCreation> {
       setState(() {
         timeNow = timePicker;
         dateTimeChoosed = DateTime(dateNow.year,dateNow.month,dateNow.day,timeNow.hour,timeNow.minute);
-        print("hello");
       });
     }
   }
@@ -356,6 +359,7 @@ class _todoListCreationState extends State<todoListCreation> {
               ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
+            dateTimeChoosed = null;
             showDialog(
                 context: context,
                 builder: (buildContext) {
@@ -410,6 +414,7 @@ class _todoListCreationState extends State<todoListCreation> {
                                     taskMaker();
                                   });
                                   dateTimeChoosed==null?dateTimeChoosed=null:NotificationShower(inputList[inputList.length-1]);
+                                  dateTimeChoosed = null;
                                 }
                                 Navigator.of(context).pop();
                               },
