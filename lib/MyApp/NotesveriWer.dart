@@ -54,7 +54,7 @@ class _SeeNoteState extends State<SeeNote> {
         toolbarOpacity: 1,
         backgroundColor: Colors.blueGrey,
         title: Text(
-          "Edited on: ${timeEditingController.text.toString().substring(0, 16)}",
+          "Edited on: ${timeEditingController.text.toString().substring(8, 10)}${timeEditingController.text.toString().substring(4, 8)}${timeEditingController.text.toString().substring(0, 4)}${timeEditingController.text.toString().substring(10,16)}",
           style: TextStyle(
             fontSize: 15,
             color: Colors.white,
@@ -146,8 +146,8 @@ class _SeeNoteState extends State<SeeNote> {
                         hintStyle: notesTitle(Colors.grey, 24),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                            color: Colors.black,
-                            width: 3.5,
+                            color: Colors.cyanAccent,
+                            width: 1.5,
                           ),
                         ),
                         enabledBorder: UnderlineInputBorder(

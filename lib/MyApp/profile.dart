@@ -186,8 +186,8 @@ class _profile_ScreenState extends State<profile_Screen>
           },
           child: Icon(
             FontAwesomeIcons.plus,
-            color: Colors.white,
-            size: 30,
+            color: Colors.black,
+            size: 25,
           ),
         ),
         body: Stack(
@@ -271,7 +271,7 @@ class _profile_ScreenState extends State<profile_Screen>
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   bottom:
-                                      70.0), //here is the padding for content
+                                      50.0), //here is the padding for content
                               child: ListTile(
                                 autofocus: true,
                                 subtitle: Text(

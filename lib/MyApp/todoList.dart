@@ -10,6 +10,7 @@ import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
 import 'package:to_do_list/MyApp/aboutTheApp.dart';
 import 'package:to_do_list/MyApp/profile.dart';
 import 'package:to_do_list/widgets/customWidgets.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class todoListCreation extends StatefulWidget {
   final getterList;
@@ -65,9 +66,7 @@ class _todoListCreationState extends State<todoListCreation> {
         ticker: "ticker");
     var iosDetails = IOSNotificationDetails();
     var platform = NotificationDetails(android: androidDetails,iOS: iosDetails,);
-    //neeed to do something abt it
     await notificationsPlugin.schedule(0, "Task Reminder", "$task", dateTimeChoosed, platform);
-
   }
 
   //creating a date and time picker for the notification
@@ -80,8 +79,7 @@ class _todoListCreationState extends State<todoListCreation> {
         context: context,
         initialDate: dateNow,
         firstDate: DateTime.now(),
-        lastDate: DateTime(DateTime.now().year + 3))
-        .whenComplete(() => timePicker());
+        lastDate: DateTime(DateTime.now().year + 3));
 
     if (picker != null) {
       setState(() {
@@ -90,6 +88,7 @@ class _todoListCreationState extends State<todoListCreation> {
     } else {
       dateNow = DateTime.now();
     }
+    timePicker();
   }
 
   //to pick the time
@@ -99,8 +98,9 @@ class _todoListCreationState extends State<todoListCreation> {
       setState(() {
         timeNow = timePicker;
         dateTimeChoosed = DateTime(dateNow.year,dateNow.month,dateNow.day,timeNow.hour,timeNow.minute);
+        print("$dateTimeChoosed");
       });
-    }
+    }else{timeNow = TimeOfDay.now();}
   }
 
   taskMaker() {
@@ -333,7 +333,6 @@ class _todoListCreationState extends State<todoListCreation> {
                                           inputList.removeAt(index);
                                           checkBoxList.removeAt(index);
                                           timeStamp.removeAt(index);
-                                          print(timeStamp);
                                           taskMaker();
                                         });
                                       },
@@ -377,7 +376,6 @@ class _todoListCreationState extends State<todoListCreation> {
                       textInputAction: TextInputAction.newline,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
-                      //autofocus: true,
                       autocorrect: true,
                       onChanged: (text) {
                         theList = text;
@@ -431,8 +429,8 @@ class _todoListCreationState extends State<todoListCreation> {
           autofocus: true,
           child: Icon(
             FontAwesomeIcons.plus,
-            color: Colors.white,
-            size: 30,
+            color: Colors.black,
+            size: 25,
           ),
         ),
       ),
@@ -469,7 +467,7 @@ class _todoListCreationState extends State<todoListCreation> {
                 children: [
                   Text(
                     """Edited on: 
-${timeStamp[index].toString().substring(8, 10)}${timeStamp[index].toString().substring(4, 9)}${timeStamp[index].toString().substring(1, 4)}${timeStamp[index].toString().substring(10)}""",
+${timeStamp[index].toString().substring(8, 10)}${timeStamp[index].toString().substring(4, 8)}${timeStamp[index].toString().substring(0, 4)}${timeStamp[index].toString().substring(10)}""",
                     style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,

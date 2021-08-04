@@ -88,8 +88,8 @@ uploader()async{
                       hintText: "Title",
                       hintStyle: notesTitle(Colors.grey, 24),
                       focusedBorder: UnderlineInputBorder(
-                        borderSide:BorderSide(color: Colors.black,
-                          width: 3.5,
+                        borderSide:BorderSide(color: Colors.cyanAccent,
+                          width: 1.5,
                         ),
                       ),
                       enabledBorder: UnderlineInputBorder(
