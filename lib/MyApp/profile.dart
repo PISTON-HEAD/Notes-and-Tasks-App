@@ -285,7 +285,7 @@ class _profile_ScreenState extends State<profile_Screen>
                                       fontFamily: "Merriweather"),
                                 ),
                                 title: Text(
-                                  snapshot.data.docs[index]["Title"],
+                                  snapshot.data.docs[index]["Title"].toString().toLowerCase(),
                                   style: TextStyle(
                                       color: Color.fromRGBO(
                                           252, 252, 254, 0.7),

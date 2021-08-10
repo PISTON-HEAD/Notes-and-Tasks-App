@@ -124,8 +124,7 @@ class _todoListCreationState extends State<todoListCreation> {
     FirebaseFirestore.instance
         .collection("My Task")
         .doc(auth.currentUser.uid)
-        .get()
-        .then((value) {
+        .get()        .then((value) {
       print("This is the list on server: ${value["Task List"]}");
       inputList = value["Task List"];
       checkBoxList = value["Checker"];
@@ -373,6 +372,7 @@ class _todoListCreationState extends State<todoListCreation> {
                     ),
                     scrollable: true,
                     content: TextFormField(
+                      autofocus: true,
                       textInputAction: TextInputAction.newline,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,

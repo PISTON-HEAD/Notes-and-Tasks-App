@@ -2,9 +2,10 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:to_do_list/LogScreens/taskSearcher.dart';
+import 'package:to_do_list/MyApp/terms_conditions.dart';
 import 'LogScreens/SignIn_Screen.dart';
 import 'MyApp/profile.dart';
+import 'package:flutter/services.dart'; //For using SystemChrome
 
 
 Future<void> main() async {
@@ -12,9 +13,8 @@ Future<void> main() async {
   await Firebase.initializeApp();
   SharedPreferences sharedPreferences =await SharedPreferences.getInstance();
   String logger = sharedPreferences.getString("LoggedIn");
-  String id = sharedPreferences.getString("id");
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   print(logger);
-  print(id);
   runApp(logger == "true"?SignedInApp():MyApp());
 }
 
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Notes And Task Pro',
       debugShowCheckedModeBanner:false,
-      home: SignIn_Page(),
+      home: TermsAndConditions(),
     );
   }
 }
