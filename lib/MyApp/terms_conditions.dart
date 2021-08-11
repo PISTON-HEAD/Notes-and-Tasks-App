@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
 
@@ -17,20 +18,19 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
         ),
         body: SingleChildScrollView(
           child: Center(
-            child: Container(
-              child: Column(
-                children: [
-                  Text("Design the button"),
-                  MaterialButton(
-                      child: Text("I Agree"),
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SignIn_Page()));
-                      })
-                ],
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Design the button"),
+                MaterialButton(
+                    child: Text("I Agree"),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SignIn_Page()));
+                    }),
+              ],
             ),
           ),
         ),
