@@ -129,26 +129,34 @@ class _profile_ScreenState extends State<profile_Screen>
                 color: Colors.white70,
                 size: 30,
               ),
-              onSelected: (value)async{
+              onSelected: (value) async {
                 if (value == 0) {
                   print("About App");
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AppInfo(value:value)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AppInfo(value: value)));
                 } else if (value == 1) {
                   print("About Developers");
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AppInfo(value:value)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AppInfo(value: value)));
                 } else if (value == 3) {
                   print("Log Out");
-                      auth.signOut();
-                      SharedPreferences shared =
-                          await SharedPreferences.getInstance();
-                      print(shared.getString("LoggedIn"));
-                      shared.setString("LoggedIn", "false");
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => SignIn_Page()));
-                }
-                else if(value == 2){
+                  auth.signOut();
+                  SharedPreferences shared =
+                      await SharedPreferences.getInstance();
+                  print(shared.getString("LoggedIn"));
+                  shared.setString("LoggedIn", "false");
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => SignIn_Page()));
+                } else if (value == 2) {
                   print("Privacy Policy");
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AppInfo(value:value)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AppInfo(value: value)));
                 }
               },
               itemBuilder: (context) => [
@@ -232,8 +240,10 @@ class _profile_ScreenState extends State<profile_Screen>
               margin: EdgeInsets.only(top: 45),
               decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: NetworkImage("https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",),fit: BoxFit.cover,)
-              ),
+                image: NetworkImage(
+                  "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",),
+                fit: BoxFit.cover,
+              )),
               child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection("My Task")
@@ -277,8 +287,7 @@ class _profile_ScreenState extends State<profile_Screen>
                                 subtitle: Text(
                                   snapshot.data.docs[index]["Content"],
                                   style: TextStyle(
-                                      color: Color.fromARGB(
-                                          255, 152, 151, 158),
+                                      color: Color.fromARGB(255, 152, 151, 158),
                                       fontWeight: FontWeight.w800,
                                       decorationThickness: 2.5,
                                       fontSize: 12,
@@ -287,11 +296,10 @@ class _profile_ScreenState extends State<profile_Screen>
                                 title: Text(
                                   snapshot.data.docs[index]["Title"].toString().toLowerCase(),
                                   style: TextStyle(
-                                      color: Color.fromRGBO(
-                                          252, 252, 254, 0.7),
+                                      color: Color.fromRGBO(252, 252, 254, 0.7),
                                       fontWeight: FontWeight.bold,
                                       decorationThickness: 2.5,
-                                      fontSize: 22,
+                                      fontSize: 20,
                                       fontFamily: "ZenTokyoZoo"),
                                 ),
                               ),
@@ -307,8 +315,6 @@ class _profile_ScreenState extends State<profile_Screen>
       ),
     );
   }
-
-
 
   Future buildShowDialog(BuildContext context,
       AsyncSnapshot<QuerySnapshot<Object>> snapshot, int index) {

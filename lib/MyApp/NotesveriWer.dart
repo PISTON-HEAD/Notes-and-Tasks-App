@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:to_do_list/MyApp/profile.dart';
 import 'package:to_do_list/widgets/customWidgets.dart';
 
@@ -61,57 +61,87 @@ class _SeeNoteState extends State<SeeNote> {
           ),
         ),
         actions: [
-          IconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text("  Delete Note ?"),
-                      content: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          TextButton(
-                              onPressed: () {
-                                print("Deleting");
-                                widget.getDoc.reference
-                                    .delete()
-                                    .whenComplete(() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => profile_Screen())));
-                              },
-                              autofocus: true,
-                              style: ButtonStyle(),
-                              child: Text("Delete")),
-                          TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text("Cancel")),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-              icon: Icon(
-                FontAwesomeIcons.trash,
-                size: 18,
-              )),
           TextButton(
-            child: Text(
-              "Save",
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white),
-            ),
-            onPressed: () {
-              if (formKey.currentState.validate()) {
-                print("Title Name: ${titleEditingController.text}");
-                notesUpdater();
-              }
-            },
+          child: Text(
+            "Save",
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: Colors.white),
           ),
+          onPressed: () {
+            if (formKey.currentState.validate()) {
+              print("Title Name: ${titleEditingController.text}");
+              notesUpdater();
+            }
+          },
+        ),
 
+          PopupMenuButton(
+            icon: Icon(Icons.more_vert_outlined),
+            color: Colors.blueGrey,
+            itemBuilder:(context)=>[
+              PopupMenuItem(
+                value: 0,
+                child: MaterialButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text("  Delete Note ?"),
+                            content: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                TextButton(
+                                    onPressed: () {
+                                      print("Deleting");
+                                      widget.getDoc.reference
+                                          .delete()
+                                          .whenComplete(() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => profile_Screen())));
+                                    },
+                                    autofocus: true,
+                                    style: ButtonStyle(),
+                                    child: Text("Delete")),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("Cancel")),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Text("Delete",style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),),
+
+                ),
+              ),
+              PopupMenuItem(
+                child: MaterialButton(
+                  onPressed: ()async{
+                    await FlutterShare.share(
+                      title: titleEditingController.text,
+                      text: """
+                        ${titleEditingController.text}
+                        ${notesEditingController.text}
+                              """,
+                      chooserTitle:titleEditingController.text,).whenComplete(() =>{
+                      Navigator.of(context).pop(),
+                    });
+                  },
+                  child: Text("Share",style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
       body: SingleChildScrollView(

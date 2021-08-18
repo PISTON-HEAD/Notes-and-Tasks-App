@@ -20,8 +20,6 @@ Future signUp(String email , String password , String userName)async{
         "Name":userName,
         "Email":email,
         "Password":password,
-        "Recipes":0,
-        "Profile Photo":firebaseAuth.currentUser.photoURL,
         "Created Time":DateTime.now().microsecondsSinceEpoch,
         "Last SignedIn":DateTime.now().toString().toString().substring(0,16),
         "id":fireUser.uid,
@@ -56,8 +54,6 @@ Future logInUser(String email ,String password)async{
       sharedPreferences.setString("Name",logger[0]["Name"]);
       sharedPreferences.setString("Email",logger[0]["Email"]);
       sharedPreferences.setString("Password",logger[0]["Password"]);
-      sharedPreferences.setString("Profile Photo",logger[0]["Profile Photo"]);
-      sharedPreferences.setInt("Recipes", logger[0]["Recipes"]);
       sharedPreferences.setString("LoggedIn", "true");
     }
   }catch(e){

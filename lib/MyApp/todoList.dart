@@ -358,6 +358,8 @@ class _todoListCreationState extends State<todoListCreation> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             dateTimeChoosed = null;
+            timeNow = timeNow = TimeOfDay.now();
+            dateNow = DateTime.now();
             showDialog(
                 context: context,
                 builder: (buildContext) {
@@ -401,6 +403,8 @@ class _todoListCreationState extends State<todoListCreation> {
                               onPressed: () {
                                 if (theList == "") {
                                   theList = "";
+                                  timeNow = timeNow = TimeOfDay.now();
+                                  dateNow = DateTime.now();
                                 } else {
                                   setState(() {
                                     inputList.add(theList);
@@ -412,7 +416,8 @@ class _todoListCreationState extends State<todoListCreation> {
                                     taskMaker();
                                   });
                                   dateTimeChoosed==null?dateTimeChoosed=null:NotificationShower(inputList[inputList.length-1]);
-                                  dateTimeChoosed = null;
+                                  timeNow = timeNow = TimeOfDay.now();
+                                  dateNow = DateTime.now();
                                 }
                                 Navigator.of(context).pop();
                               },
