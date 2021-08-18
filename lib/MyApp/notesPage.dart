@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:to_do_list/widgets/customWidgets.dart';
 
@@ -41,9 +42,14 @@ uploader()async{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey,
         actions: [
-          IconButton(
-          icon: Icon(Icons.call_missed_outgoing_rounded),
+          TextButton(
+            child: Text("Save",style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Colors.white
+            ),),
             onPressed: (){
             if(formKey.currentState.validate()){
               print("Title Name: ${titleEditingController.text}");
@@ -61,8 +67,13 @@ uploader()async{
               Form(
                 key: formKey,
                 child: Container(
+                  padding: EdgeInsets.only(left: 5),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.cyanAccent,width: 2),
+                  ),
                   child: TextFormField(
                     autocorrect: true,
+                    autofocus: true,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value){
                       return value.length==0?"Enter a title":null;
@@ -77,8 +88,8 @@ uploader()async{
                       hintText: "Title",
                       hintStyle: notesTitle(Colors.grey, 24),
                       focusedBorder: UnderlineInputBorder(
-                        borderSide:BorderSide(color: Colors.black,
-                          width: 3.5,
+                        borderSide:BorderSide(color: Colors.cyanAccent,
+                          width: 1.5,
                         ),
                       ),
                       enabledBorder: UnderlineInputBorder(
@@ -88,15 +99,25 @@ uploader()async{
                   ),
                 ),
               ),
-              TextFormField(
-                controller: notesEditingController,
-                decoration: InputDecoration(
-                  hintText: "Content",
-                  hintStyle: notesTitle(Colors.white, 20),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.only(left: 5),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.cyanAccent
+                      ,width: 2),
                 ),
-                maxLines:100000,
-                style: customStyle(Colors.white, 20, FontWeight.w600, ""),
-                textDirection: TextDirection.ltr,
+                child: TextFormField(
+                  controller: notesEditingController,
+                  decoration: InputDecoration(
+                    hintText: "Content",
+                    hintStyle: notesTitle(Colors.white70, 20),
+                  ),
+                  textInputAction: TextInputAction.newline,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  style: customStyle(Colors.white, 20, FontWeight.w600, ""),
+                  textDirection: TextDirection.ltr,
+                ),
               ),
             ],
           ),

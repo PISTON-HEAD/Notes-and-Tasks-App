@@ -1,7 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.to_do_list">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
    <application
-        android:label="to_do_list"
+        android:label="Notes and Tasks Pro"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

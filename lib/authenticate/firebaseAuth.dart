@@ -13,10 +13,9 @@ Future signUp(String email , String password , String userName)async{
     final fireUser = credential.user;
     //an if condition can be kept to just in case if fireUser is empty??
     final logger = (await FirebaseFirestore.instance.collection("Ordinary_Users").where("id",isEqualTo: fireUser.uid).get()).docs;
-    if(logger.length==0 && fireUser.emailVerified){
+    if(logger.length==0){
       print("New User -- Initializing Cloud Collection....");
       fireUser.updateDisplayName(userName);
-      fireUser.updatePhotoURL(fireUser.photoURL);
       FirebaseFirestore.instance.collection("Ordinary_Users").doc(fireUser.uid).set({
         "Name":userName,
         "Email":email,
@@ -27,12 +26,11 @@ Future signUp(String email , String password , String userName)async{
         "Last SignedIn":DateTime.now().toString().toString().substring(0,16),
         "id":fireUser.uid,
       });
+      print("Cloud Base creation Over");
       sharedPreferences.setString("id",fireUser.uid);
       sharedPreferences.setString("Name",userName);
       sharedPreferences.setString("Email",email);
       sharedPreferences.setString("Password",password);
-      sharedPreferences.setString("Profile Photo",fireUser.photoURL);
-      sharedPreferences.setInt("Recipes", 0);
       sharedPreferences.setString("LoggedIn", "true");
     }
   }catch(error){
@@ -74,13 +72,7 @@ Future logInUser(String email ,String password)async{
 }
 
 
-Future verifyEmail(String email , UserCredential UserInfo){
-  try{
-    UserInfo.user.sendEmailVerification();
-  }catch(error){
 
-  }
-}
 
 /*
 

@@ -3,19 +3,24 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
+import 'package:to_do_list/MyApp/aboutTheApp.dart';
 import 'package:to_do_list/MyApp/profile.dart';
 import 'package:to_do_list/widgets/customWidgets.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class todoListCreation extends StatefulWidget {
   final getterList;
   final checkBoxValue;
 
-  const todoListCreation({Key key, this.getterList, this.checkBoxValue}) : super(key: key);
+  const todoListCreation({Key key, this.getterList, this.checkBoxValue})
+      : super(key: key);
   @override
-  _todoListCreationState createState() => _todoListCreationState(getterList,checkBoxValue);
+  _todoListCreationState createState() =>
+      _todoListCreationState(getterList, checkBoxValue);
 }
 
 class _todoListCreationState extends State<todoListCreation> {
@@ -26,33 +31,111 @@ class _todoListCreationState extends State<todoListCreation> {
   FirebaseAuth auth = FirebaseAuth.instance;
   final getterList;
   final checkBoxValue;
-  _todoListCreationState(this.getterList,this.checkBoxValue);
+  _todoListCreationState(this.getterList, this.checkBoxValue);
   List checkBoxList = [];
   bool checker = !true;
+  List timeStamp = [];
+  bool scheduler = !true;
+  FlutterLocalNotificationsPlugin notificationsPlugin =
+  new FlutterLocalNotificationsPlugin();
+  //notification manager
+  initializer() {
+    var androidInitialize = new AndroidInitializationSettings("icon");
+    var iosInitialize = new IOSInitializationSettings();
+    var initializeAll = new InitializationSettings(
+        android: androidInitialize, iOS: iosInitialize);
+    notificationsPlugin.initialize(initializeAll,
+        onSelectNotification: notificationSelected);
+  }
 
-  taskMaker(){
-    FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).set({
-      "Task List":inputList,
-      "Checker":checkBoxList,
+  //after the notification is tapped
+  Future notificationSelected(var payload) async {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>todoListCreation(getterList: inputList,checkBoxValue: checkBoxList,)));
+  }
+
+  //showing the notification
+  NotificationShower(String task) async {
+    var androidDetails = AndroidNotificationDetails(
+        "channelId", "channelName", "channelDescription",
+        importance: Importance.max,
+        playSound: true,
+        enableVibration: true,
+        icon: "icon",
+        showWhen: true,
+        priority: Priority.high,
+        ticker: "ticker");
+    var iosDetails = IOSNotificationDetails();
+    var platform = NotificationDetails(android: androidDetails,iOS: iosDetails,);
+    await notificationsPlugin.schedule(0, "Task Reminder", "$task", dateTimeChoosed, platform);
+  }
+
+  //creating a date and time picker for the notification
+  DateTime dateNow;
+  TimeOfDay timeNow;
+  var dateTimeChoosed;
+  //to pick the date
+  datePicker()async{
+    var picker = await showDatePicker(
+        context: context,
+        initialDate: dateNow,
+        firstDate: DateTime.now(),
+        lastDate: DateTime(DateTime.now().year + 3));
+
+    if (picker != null) {
+      setState(() {
+        dateNow = picker;
+      });
+    } else {
+      dateNow = DateTime.now();
+    }
+    timePicker();
+  }
+
+  //to pick the time
+  timePicker() async {
+    var timePicker = await showTimePicker(context: context, initialTime: timeNow);
+    if (timeNow != null) {
+      setState(() {
+        timeNow = timePicker;
+        dateTimeChoosed = DateTime(dateNow.year,dateNow.month,dateNow.day,timeNow.hour,timeNow.minute);
+        print("$dateTimeChoosed");
+      });
+    }else{timeNow = TimeOfDay.now();}
+  }
+
+  taskMaker() {
+    FirebaseFirestore.instance
+        .collection("My Task")
+        .doc(auth.currentUser.uid)
+        .set({
+      "Task List": inputList,
+      "Checker": checkBoxList,
+      "Time Stamp": timeStamp,
     });
   }
 
   @override
   void initState() {
-    ownerName = auth.currentUser.displayName;
-    if(getterList != null ){
+    if (getterList != null) {
       checkBoxList = checkBoxValue;
       print("The getter List on screen 1  in screen 2:$getterList");
-    inputList = getterList;
+      inputList = getterList;
     }
-    FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).get().then((value) {
+    FirebaseFirestore.instance
+        .collection("My Task")
+        .doc(auth.currentUser.uid)
+        .get()        .then((value) {
       print("This is the list on server: ${value["Task List"]}");
       inputList = value["Task List"];
       checkBoxList = value["Checker"];
+      timeStamp = value["Time Stamp"];
       print("The checker Value: $checkBoxList");
       print("The inputList after  server: $inputList");
     });
-      // TODO: implement initState
+    initializer();
+    dateNow = DateTime.now();
+    timeNow = TimeOfDay.now();
+    // TODO: implement initState
     super.initState();
   }
 
@@ -63,30 +146,36 @@ class _todoListCreationState extends State<todoListCreation> {
         appBar: AppBar(
           centerTitle: true,
           title: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "$ownerName",
+                "Tasks",
                 style: appBar_Style,
               ),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width/5.5,
-                  ),
                   MaterialButton(
-                    onPressed: (){
+                    onPressed: () {
                       //Navigator.of(context).pop();
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => profile_Screen()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => profile_Screen()));
                     },
-                    child: Icon(FontAwesomeIcons.stickyNote,color: Colors.grey,size: 30,),
+                    child: Icon(
+                      FontAwesomeIcons.stickyNote,
+                      color: Colors.grey,
+                      size: 28.8,
+                    ),
                   ),
                   MaterialButton(
-                    autofocus: true,
-                    child: Icon(FontAwesomeIcons.solidClipboard,color: Colors.limeAccent,size: 30,),
-                    onPressed: () {}
-                  ),
+                      autofocus: true,
+                      child: Icon(
+                        FontAwesomeIcons.solidClipboard,
+                        color: Colors.limeAccent,
+                        size: 28.8,
+                      ),
+                      onPressed: () {}),
                 ],
               ),
             ],
@@ -95,153 +184,241 @@ class _todoListCreationState extends State<todoListCreation> {
           toolbarHeight: 85,
           elevation: 10,
           actions: [
-            IconButton(
+            PopupMenuButton(
+              color: CupertinoColors.systemTeal,
               icon: Icon(
-                Icons.add_to_home_screen_outlined,
+                Icons.more_vert_sharp,
                 color: Colors.white70,
+                size: 30,
               ),
-              onPressed: () async {
-                auth.signOut();
-                SharedPreferences shared = await SharedPreferences.getInstance();
-                print(shared.getString("LoggedIn"));
-                shared.setString("LoggedIn", "false");
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => SignIn_Page()));
+              onSelected: (value) async {
+                if (value == 0) {
+                  print("About App");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AppInfo(value: value)));
+                } else if (value == 1) {
+                  print("About Developers");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AppInfo(value: value)));
+                } else if (value == 3) {
+                  print("Log Out");
+                  auth.signOut();
+                  SharedPreferences shared =
+                      await SharedPreferences.getInstance();
+                  print(shared.getString("LoggedIn"));
+                  shared.setString("LoggedIn", "false");
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => SignIn_Page()));
+                } else if (value == 2) {
+                  print("Privacy Policy");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AppInfo(value: value)));
+                }
               },
-            )
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("About App"),
+                  value: 0,
+                ),
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("About Developers"),
+                  value: 1,
+                ),
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("Privacy Policy"),
+                  value: 2,
+                ),
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("Log Out"),
+                  value: 3,
+                ),
+              ],
+            ),
           ],
         ), //u normally do the appbar
-            backgroundColor: CupertinoColors.label,
+        backgroundColor: CupertinoColors.label,
         body: inputList == null
-            ? Container()
-            : ListView.builder(
-                addAutomaticKeepAlives: false,
-                scrollDirection: Axis.vertical,
-                itemCount: inputList.length,
-                itemBuilder: (context, index) {
-                  return inputList.isEmpty
-                      ? Container(color: Colors.red[300],)
-                      : Padding(
-                          padding:
-                              EdgeInsets.only(top: 10, left: 15, right: 15),
-                          child: Material(
-                            borderRadius: BorderRadius.circular(10),
-                            elevation: 20,
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.black87,
-                                    border: Border.all(color: Colors.white60),
-                                    borderRadius: BorderRadius.circular(10)),
-                                width: MediaQuery.of(context).size.width,
-                                child: ListTile(
-                                   leading:checkBoxList==[] ? null:Checkbox(
-                                     autofocus: true,
-                                    activeColor: Colors.greenAccent,
-                                    splashRadius: 20,
-                                    value: checkBoxList[index],
-                                    onChanged: (value){
-                                    setState(() {
-                                      print("The check Box on pressed:  $checkBoxList}");
-                                      if(checkBoxList[index] == false){
-                                        checkBoxList[index] = true;
-                                      }else{
-                                        checkBoxList[index] = false;
-                                      }
-                                      taskMaker();
-                                    });
-                                  },),
-                                  selected: true,
-                                  onLongPress: (){
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          editingController = TextEditingController(text: inputList[index]);
-                                          return AlertDialog(
-                                            title: Text("Edit your text"),
-                                            content: TextField(
-                                              controller:editingController,
-                                              onChanged: (value){
-                                                theList = value;
-                                              },
+            ? Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  image: NetworkImage(
+                    "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",
+                  ),
+                  fit: BoxFit.cover,
+                )
+                    //https://cdn.wallpapersafari.com/5/69/ZFWaoE.jpg
+                    //https://img.freepik.com/free-photo/old-black-background-grunge-texture-dark-wallpaper-blackboard-chalkboard-room-wall_1258-28313.jpg?size=626&ext=jpg
+                    ),
+              )
+            : Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: ListView.builder(
+                  addAutomaticKeepAlives: false,
+                  scrollDirection: Axis.vertical,
+                  itemCount: inputList.length,
+                  itemBuilder: (context, index) {
+                    return inputList.isEmpty
+                        ? Container(
+                            color: Colors.red[300],
+                          )
+                        : Padding(
+                            padding:
+                                EdgeInsets.only(top: 10, left: 15, right: 15),
+                            child: Material(
+                              borderRadius: BorderRadius.circular(10),
+                              elevation: 20,
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.black87,
+                                      border: Border.all(
+                                        color: Colors.cyanAccent,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: ListTile(
+                                    leading: checkBoxList == []
+                                        ? null
+                                        : Checkbox(
+                                            side: BorderSide(
+                                              color: Colors.white,
                                             ),
-                                            actions: [
-                                              MaterialButton(
-                                                child: Text("pop"),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    if(theList.length != 0){
-                                                      inputList[index] = theList;
-                                                      //checkBoxList[index] = false;
-                                                      taskMaker();
-                                                    }
-                                                    theList = "";
-                                                  });
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        });
-                                  },
-                                  autofocus: true,
-                                  trailing: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        inputList.removeAt(index);
-                                        checkBoxList.removeAt(index);
-                                        taskMaker();
-                                      });
+                                            autofocus: true,
+                                            activeColor: Colors.cyanAccent,
+                                            splashRadius: 20,
+                                            value: checkBoxList[index],
+                                            onChanged: (value) {
+                                              setState(() {
+                                                print(
+                                                    "The check Box on pressed:  $checkBoxList}");
+                                                if (checkBoxList[index] ==
+                                                    false) {
+                                                  checkBoxList[index] = true;
+                                                } else {
+                                                  checkBoxList[index] = false;
+                                                }
+                                                taskMaker();
+                                              });
+                                            },
+                                          ),
+                                    selected: true,
+                                    onTap: () {
+                                      editTask(context, index);
                                     },
-                                    icon: Icon(
-                                      FontAwesomeIcons.trash,
-                                      color: Colors.red,
+                                    onLongPress: () {
+                                      editTask(context, index);
+                                    },
+                                    autofocus: true,
+                                    trailing: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          inputList.removeAt(index);
+                                          checkBoxList.removeAt(index);
+                                          timeStamp.removeAt(index);
+                                          taskMaker();
+                                        });
+                                      },
+                                      icon: Icon(
+                                        FontAwesomeIcons.trash,
+                                        color: Colors.red,
+                                      ),
                                     ),
-                                  ),
-                                  title: Text(
-                                    " ${index + 1}).  ${inputList[index].toString()}",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: "Merriweather",
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
+                                    title: Text(
+                                      " ${index + 1})  ${inputList[index].toString()}",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: "Merriweather",
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                )),
-                          ),
-                        );
-                },
+                                  )),
+                            ),
+                          );
+                  },
+                ),
               ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
+            dateTimeChoosed = null;
             showDialog(
                 context: context,
                 builder: (buildContext) {
                   return AlertDialog(
                     title: Text(
-                      "Enter ur list",
-                      style: appBar_Style,
+                      "Enter the task",
+                      style: TextStyle(
+                        fontFamily: "Acme",
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     scrollable: true,
-                    content: TextField(
+                    content: TextFormField(
+                      autofocus: true,
+                      textInputAction: TextInputAction.newline,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
                       autocorrect: true,
                       onChanged: (text) {
                         theList = text;
                       },
                     ),
                     actions: [
-                      MaterialButton(
-                        child: Text("pop"),
-                        onPressed: () {
-                          if(theList==""){
-                            theList="";
-                          }else{setState(() {
-                            inputList.add(theList);
-                            theList = "";
-                            checkBoxList.add(false);
-                            taskMaker();
-                          });}
-                          Navigator.of(context).pop();
-                        },
+                      Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            MaterialButton(
+                              color: Colors.grey,
+                                child: Text(dateTimeChoosed==null?"Schedule":"${dateTimeChoosed.toString().substring(0,16)}",style: TextStyle(),), onPressed: () {datePicker();}),
+                            MaterialButton(
+                              color: Colors.cyanAccent,
+                              child: Text(
+                                "Save",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: "Merriweather",
+                                ),
+                              ),
+                              onPressed: () {
+                                if (theList == "") {
+                                  theList = "";
+                                } else {
+                                  setState(() {
+                                    inputList.add(theList);
+                                    theList = "";
+                                    checkBoxList.add(false);
+                                    timeStamp.add(DateTime.now()
+                                        .toString()
+                                        .substring(0, 16));
+                                    taskMaker();
+                                  });
+                                  dateTimeChoosed==null?dateTimeChoosed=null:NotificationShower(inputList[inputList.length-1]);
+                                  dateTimeChoosed = null;
+                                }
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   );
@@ -251,72 +428,151 @@ class _todoListCreationState extends State<todoListCreation> {
           highlightElevation: 20,
           autofocus: true,
           child: Icon(
-            FontAwesomeIcons.clipboardList,
+            FontAwesomeIcons.plus,
             color: Colors.black,
-            size: 30,
+            size: 25,
           ),
         ),
       ),
     );
   }
+
+  Future<dynamic> editTask(BuildContext context, int index) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          editingController = TextEditingController(text: inputList[index]);
+          return AlertDialog(
+            title: Text(
+              "Edit",
+              style: TextStyle(
+                fontFamily: "Acme",
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: TextFormField(
+              autofocus: true,
+              textInputAction: TextInputAction.newline,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              controller: editingController,
+              onChanged: (value) {
+                theList = value;
+              },
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                    """Edited on: 
+${timeStamp[index].toString().substring(8, 10)}${timeStamp[index].toString().substring(4, 8)}${timeStamp[index].toString().substring(0, 4)}${timeStamp[index].toString().substring(10)}""",
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: "Cinzel"),
+                  ),
+                  MaterialButton(
+                    child: Text(
+                      "Save",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: "Merriweather",
+                      ),
+                    ),
+                    color: Colors.cyanAccent,
+                    onPressed: () {
+                      setState(() {
+                        if (theList.length != 0) {
+                          inputList[index] = theList;
+                          //checkBoxList[index] = false;
+                          timeStamp[index] =
+                              (DateTime.now().toString().substring(0, 16));
+                          taskMaker();
+                        }
+                        theList = "";
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
+  }
 }
 
-
-
-
-
- /*
+/*
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:recipe_club/widgets/customWidgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
+import 'package:to_do_list/MyApp/aboutTheApp.dart';
+import 'package:to_do_list/MyApp/profile.dart';
+import 'package:to_do_list/widgets/customWidgets.dart';
 
 class todoListCreation extends StatefulWidget {
   final getterList;
   final checkBoxValue;
 
-  const todoListCreation({Key key, this.getterList, this.checkBoxValue}) : super(key: key);
+  const todoListCreation({Key key, this.getterList, this.checkBoxValue})
+      : super(key: key);
   @override
-  _todoListCreationState createState() => _todoListCreationState(getterList,checkBoxValue);
+  _todoListCreationState createState() =>
+      _todoListCreationState(getterList, checkBoxValue);
 }
 
 class _todoListCreationState extends State<todoListCreation> {
   TextEditingController editingController = new TextEditingController();
-
+  String ownerName;
   List inputList = [];
   String theList = "";
   FirebaseAuth auth = FirebaseAuth.instance;
   final getterList;
   final checkBoxValue;
-  _todoListCreationState(this.getterList,this.checkBoxValue);
+  _todoListCreationState(this.getterList, this.checkBoxValue);
   List checkBoxList = [];
   bool checker = !true;
+  List timeStamp = [];
 
-  taskMaker(){
-    FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).set({
-      "Task List":inputList,
-      "Checker":checkBoxList,
+  taskMaker() {
+    FirebaseFirestore.instance
+        .collection("My Task")
+        .doc(auth.currentUser.uid)
+        .set({
+      "Task List": inputList,
+      "Checker": checkBoxList,
+      "Time Stamp":timeStamp,
     });
   }
 
   @override
   void initState() {
-    if(getterList != null ){
+    if (getterList != null) {
       checkBoxList = checkBoxValue;
       print("The getter List on screen 1  in screen 2:$getterList");
-    inputList = getterList;
+      inputList = getterList;
     }
-    FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).get().then((value) {
+    FirebaseFirestore.instance
+        .collection("My Task")
+        .doc(auth.currentUser.uid)
+        .get()
+        .then((value) {
       print("This is the list on server: ${value["Task List"]}");
       inputList = value["Task List"];
       checkBoxList = value["Checker"];
+      timeStamp = value["Time Stamp"];
       print("The checker Value: $checkBoxList");
       print("The inputList after  server: $inputList");
     });
-      // TODO: implement initState
+    // TODO: implement initState
     super.initState();
   }
 
@@ -324,106 +580,218 @@ class _todoListCreationState extends State<todoListCreation> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: appBar_Main(
-            context, "ToDo List", Colors.teal), //u normally do the appbar
-            backgroundColor: CupertinoColors.label,
+        appBar: AppBar(
+          centerTitle: true,
+          title: Column(
+            children: [
+              Text(
+                "Tasks",
+                style: appBar_Style,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  MaterialButton(
+                    onPressed: () {
+                      //Navigator.of(context).pop();
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => profile_Screen()));
+                    },
+                    child: Icon(
+                      FontAwesomeIcons.stickyNote,
+                      color: Colors.grey,
+                      size: 28.8,
+                    ),
+                  ),
+                  MaterialButton(
+                      autofocus: true,
+                      child: Icon(
+                        FontAwesomeIcons.solidClipboard,
+                        color: Colors.limeAccent,
+                        size: 28.8,
+                      ),
+                      onPressed: () {}),
+                ],
+              ),
+            ],
+          ),
+          backgroundColor: CupertinoColors.black,
+          toolbarHeight: 85,
+          elevation: 10,
+          actions: [
+            PopupMenuButton(
+              color: CupertinoColors.systemTeal,
+              icon: Icon(
+                Icons.more_vert_sharp,
+                color: Colors.white70,
+                size: 30,
+              ),
+              onSelected: (value) async {
+                if (value == 0) {
+                  print("About App");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AppInfo(value: value)));
+                } else if (value == 1) {
+                  print("About Developers");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AppInfo(value: value)));
+                } else if (value == 3) {
+                  print("Log Out");
+                  auth.signOut();
+                  SharedPreferences shared =
+                      await SharedPreferences.getInstance();
+                  print(shared.getString("LoggedIn"));
+                  shared.setString("LoggedIn", "false");
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => SignIn_Page()));
+                } else if (value == 2) {
+                  print("Privacy Policy");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AppInfo(value: value)));
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("About App"),
+                  value: 0,
+                ),
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("About Developers"),
+                  value: 1,
+                ),
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("Privacy Policy"),
+                  value: 2,
+                ),
+                PopupMenuItem(
+                  textStyle: popStyle(),
+                  child: Text("Log Out"),
+                  value: 3,
+                ),
+              ],
+            ),
+          ],
+        ), //u normally do the appbar
+        backgroundColor: CupertinoColors.label,
         body: inputList == null
-            ? Container()
-            : ListView.builder(
-                addAutomaticKeepAlives: false,
-                scrollDirection: Axis.vertical,
-                itemCount: inputList.length,
-                itemBuilder: (context, index) {
-                  return inputList.isEmpty
-                      ? Container(color: Colors.red[300],)
-                      : Padding(
-                          padding:
-                              EdgeInsets.only(top: 10, left: 15, right: 15),
-                          child: Material(
-                            borderRadius: BorderRadius.circular(10),
-                            elevation: 20,
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.black87,
-                                    border: Border.all(color: Colors.white60),
-                                    borderRadius: BorderRadius.circular(10)),
-                                width: MediaQuery.of(context).size.width,
-                                child: ListTile(
-                                   leading:checkBoxList==[] ? null:Checkbox(
-                                     autofocus: true,
-                                    activeColor: Colors.greenAccent,
-                                    splashRadius: 20,
-                                    value: checkBoxList[index],
-                                    onChanged: (value){
-                                    setState(() {
-                                      print("The check Box on pressed:  $checkBoxList}");
-                                      if(checkBoxList[index] == false){
-                                        checkBoxList[index] = true;
-                                      }else{
-                                        checkBoxList[index] = false;
-                                      }
-                                      taskMaker();
-                                    });
-                                  },),
-                                  selected: true,
-                                  onLongPress: (){
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          editingController = TextEditingController(text: inputList[index]);
-                                          return AlertDialog(
-                                            content: TextField(
-                                              controller:editingController,
-                                              onChanged: (value){
-                                                theList = value;
-                                              },
+            ? Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  image: NetworkImage(
+                    "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",
+                  ),
+                  fit: BoxFit.cover,
+                )
+                    //https://cdn.wallpapersafari.com/5/69/ZFWaoE.jpg
+                    //https://img.freepik.com/free-photo/old-black-background-grunge-texture-dark-wallpaper-blackboard-chalkboard-room-wall_1258-28313.jpg?size=626&ext=jpg
+                    ),
+              )
+            : Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  image: NetworkImage(
+                    "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",
+                  ),
+                  fit: BoxFit.cover,
+                ),
+                    ),
+                child: ListView.builder(
+                  addAutomaticKeepAlives: false,
+                  scrollDirection: Axis.vertical,
+                  itemCount: inputList.length,
+                  itemBuilder: (context, index) {
+                    return inputList.isEmpty
+                        ? Container(
+                            color: Colors.red[300],
+                          )
+                        : Padding(
+                            padding:
+                                EdgeInsets.only(top: 10, left: 15, right: 15),
+                            child: Material(
+                              borderRadius: BorderRadius.circular(10),
+                              elevation: 20,
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.black87,
+                                      border: Border.all(
+                                        color: Colors.cyanAccent,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: ListTile(
+                                    leading: checkBoxList == []
+                                        ? null
+                                        : Checkbox(
+                                            side: BorderSide(
+                                              color: Colors.white,
                                             ),
-                                            actions: [
-                                              MaterialButton(
-                                                child: Text("pop"),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    if(theList.length != 0){
-                                                      inputList[index] = theList;
-                                                      //checkBoxList[index] = false;
-                                                      taskMaker();
-                                                    }
-                                                    theList = "";
-                                                  });
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        });
-                                  },
-                                  autofocus: true,
-                                  trailing: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        inputList.removeAt(index);
-                                        checkBoxList.removeAt(index);
-                                        taskMaker();
-                                      });
+                                            autofocus: true,
+                                            activeColor: Colors.cyanAccent,
+                                            splashRadius: 20,
+                                            value: checkBoxList[index],
+                                            onChanged: (value) {
+                                              setState(() {
+                                                print(
+                                                    "The check Box on pressed:  $checkBoxList}");
+                                                if (checkBoxList[index] ==
+                                                    false) {
+                                                  checkBoxList[index] = true;
+                                                } else {
+                                                  checkBoxList[index] = false;
+                                                }
+                                                taskMaker();
+                                              });
+                                            },
+                                          ),
+                                    selected: true,
+                                    onTap: (){
+                                      editTask(context, index);
                                     },
-                                    icon: Icon(
-                                      FontAwesomeIcons.trash,
-                                      color: Colors.red,
+                                    onLongPress: () {
+                                      editTask(context, index);
+                                    },
+                                    autofocus: true,
+                                    trailing: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          inputList.removeAt(index);
+                                          checkBoxList.removeAt(index);
+                                          timeStamp.removeAt(index);
+                                          print(timeStamp);
+                                          taskMaker();
+                                        });
+                                      },
+                                      icon: Icon(
+                                        FontAwesomeIcons.trash,
+                                        color: Colors.red,
+                                      ),
                                     ),
-                                  ),
-                                  title: Text(
-                                    " ${index + 1}).  ${inputList[index].toString()}",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: "Merriweather",
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
+                                    title: Text(
+                                      " ${index + 1})  ${inputList[index].toString()}",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: "Merriweather",
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                )),
-                          ),
-                        );
-                },
+                                  )),
+                            ),
+                          );
+                  },
+                ),
               ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -432,11 +800,19 @@ class _todoListCreationState extends State<todoListCreation> {
                 builder: (buildContext) {
                   return AlertDialog(
                     title: Text(
-                      "Enter ur list",
-                      style: appBar_Style,
+                      "Enter the task",
+                      style: TextStyle(
+                        fontFamily: "Acme",
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     scrollable: true,
-                    content: TextField(
+                    content: TextFormField(
+                      textInputAction: TextInputAction.newline,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      autofocus: true,
                       autocorrect: true,
                       onChanged: (text) {
                         theList = text;
@@ -444,14 +820,23 @@ class _todoListCreationState extends State<todoListCreation> {
                     ),
                     actions: [
                       MaterialButton(
-                        child: Text("pop"),
+                        color: Colors.cyanAccent,
+                        child: Text(
+                          "Save",
+                          style: TextStyle(),
+                        ),
                         onPressed: () {
-                          setState(() {
-                            inputList.add(theList);
+                          if (theList == "") {
                             theList = "";
-                            checkBoxList.add(false);
-                            taskMaker();
-                          });
+                          } else {
+                            setState(() {
+                              inputList.add(theList);
+                              theList = "";
+                              checkBoxList.add(false);
+                              timeStamp.add(DateTime.now().toString().substring(0,16));
+                              taskMaker();
+                            });
+                          }
                           Navigator.of(context).pop();
                         },
                       ),
@@ -463,14 +848,79 @@ class _todoListCreationState extends State<todoListCreation> {
           highlightElevation: 20,
           autofocus: true,
           child: Icon(
-            Icons.add,
-            color: Colors.black,
-            size: 35,
+            FontAwesomeIcons.plus,
+            color: Colors.white,
+            size: 30,
           ),
         ),
       ),
     );
   }
+
+  Future<dynamic> editTask(BuildContext context, int index) {
+    return showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          editingController =
+                                              TextEditingController(
+                                                  text: inputList[index]);
+                                          return AlertDialog(
+                                            title: Text("Edit",style: TextStyle(
+                                              fontFamily: "Acme",
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold,
+                                            ),),
+                                            content: TextFormField(
+                                              autofocus: true,
+                                              textInputAction:
+                                                  TextInputAction.newline,
+                                              keyboardType:
+                                                  TextInputType.multiline,
+                                              maxLines: null,
+                                              controller: editingController,
+                                              onChanged: (value) {
+                                                theList = value;
+                                              },
+                                            ),
+
+                                            actions: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  Text("""Edited on:
+${timeStamp[index].toString().substring(8,10)}${timeStamp[index].toString().substring(4,9)}${timeStamp[index].toString().substring(1,4)}${timeStamp[index].toString().substring(10)}""",style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w700,
+                                                    fontFamily: "Cinzel"
+                                                  ),),
+                                                  MaterialButton(
+                                                    child: Text("Save",style:TextStyle(
+                                                      fontSize: 15,
+                                                        fontWeight: FontWeight.w700,
+                                                        fontFamily: "Merriweather",
+                                                    ),),
+                                                    color: Colors.cyanAccent,
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        if (theList.length != 0) {
+                                                          inputList[index] =
+                                                              theList;
+                                                          //checkBoxList[index] = false;
+                                                          timeStamp[index] = (DateTime.now().toString().substring(0,16));
+                                                          taskMaker();
+                                                        }
+                                                        theList = "";
+                                                      });
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          );
+                                        });
+  }
 }
+
 
  */
