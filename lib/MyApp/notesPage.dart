@@ -33,9 +33,7 @@ uploader()async{
         "Time":DateTime.now().toString(),
       }).whenComplete(() => Navigator.of(context).pop());
 
-  Future.delayed(Duration(seconds: 1)).whenComplete(() {
-    Navigator.of(context).pop();
-  });
+
 }
 
 

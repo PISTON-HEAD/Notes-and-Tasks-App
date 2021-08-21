@@ -281,7 +281,7 @@ class _profile_ScreenState extends State<profile_Screen>
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   bottom:
-                                      50.0), //here is the padding for content
+                                      55.0), //here is the padding for content
                               child: ListTile(
                                 autofocus: true,
                                 subtitle: Text(
