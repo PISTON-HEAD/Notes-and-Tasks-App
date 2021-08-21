@@ -32,6 +32,8 @@ uploader()async{
         "Content":notesEditingController.text,
         "Time":DateTime.now().toString(),
       }).whenComplete(() => Navigator.of(context).pop());
+
+
 }
 
 
@@ -48,7 +50,7 @@ uploader()async{
             child: Text("Save",style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: Colors.white
+              color: Colors.white,
             ),),
             onPressed: (){
             if(formKey.currentState.validate()){

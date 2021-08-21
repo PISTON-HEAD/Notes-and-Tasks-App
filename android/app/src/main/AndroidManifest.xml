@@ -6,6 +6,7 @@
    <application
         android:label="Notes and Tasks Pro"
         android:icon="@mipmap/ic_launcher">
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

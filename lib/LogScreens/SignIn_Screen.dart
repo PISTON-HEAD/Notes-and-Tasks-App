@@ -78,6 +78,11 @@ class _SignIn_PageState extends State<SignIn_Page> {
                 errorMsg = value.toString().substring(i + 2);
                 print("the error message $i  $errorMsg");
               }
+              if(errorMsg == "The password is invalid or the user does not have a password."){
+                errorMsg = "The password entered is invalid";
+              }else if(errorMsg == "There is no user record corresponding to this identifier. The user may have been deleted."){
+                errorMsg = "User id is invalid";
+              }
             }
           });
         } else {
@@ -126,7 +131,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: SizedBox(
-                      height: screenValue == true ? 70 : 0,
+                      height: screenValue == true ? 60 : 0,
                       width: MediaQuery.of(context).size.width,
                       child: screenValue == true
                           ? Container(
