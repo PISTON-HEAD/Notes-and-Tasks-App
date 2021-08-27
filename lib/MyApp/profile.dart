@@ -37,15 +37,6 @@ class _profile_ScreenState extends State<profile_Screen>
 
   @override
   void initState() {
-    FirebaseFirestore.instance
-        .collection("My Task")
-        .doc(auth.currentUser.uid)
-        .get()
-        .then((value) {
-      getter = value["Task List"];
-      checkBoxValue = value["Checker"];
-      print("The inputList ater  server in screen 1:  $getter");
-    });
     super.initState();
     _controller = AnimationController(vsync: this);
   }
@@ -87,30 +78,12 @@ class _profile_ScreenState extends State<profile_Screen>
                       size: 28.8,
                     ),
                     onPressed: () {
-                      print("prophile page");
-                      setState(() {
-                        FirebaseFirestore.instance
-                            .collection("My Task")
-                            .doc(auth.currentUser.uid)
-                            .get()
-                            .then((value) {
-                          print(
-                              "This is the list on server in screen 1: ${value["Task List"]}");
-                          getter = value["Task List"];
-                          checkBoxValue = value["Checker"];
-                          print(
-                              "The inputList after  server in screen 1:  $getter");
-                        });
-                      });
                       Future.delayed(dur).then((value) {
                         print("$dur sec delayed");
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => todoListCreation(
-                                      getterList: getter,
-                                      checkBoxValue: checkBoxValue,
-                                    )));
+                                builder: (context) => todoListCreation()));
                       });
                     },
                   ),
@@ -272,6 +245,11 @@ class _profile_ScreenState extends State<profile_Screen>
                           },
                           child: Container(
                             decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                      "https://wallpapercave.com/wp/wp5056723.jpg"),
+                                  fit: BoxFit.cover,
+                                ),
                                 color: Color.fromARGB(255, 28, 28, 30),
                                 border: Border.all(
                                     color: Colors.cyanAccent, width: 2.5),
@@ -296,10 +274,10 @@ class _profile_ScreenState extends State<profile_Screen>
                                 title: Text(
                                   snapshot.data.docs[index]["Title"].toString().toLowerCase(),
                                   style: TextStyle(
-                                      color: Color.fromRGBO(252, 252, 254, 0.7),
+                                      color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       decorationThickness: 2.5,
-                                      fontSize: 20,
+                                      fontSize: 22,
                                       fontFamily: "ZenTokyoZoo"),
                                 ),
                               ),
@@ -324,7 +302,7 @@ class _profile_ScreenState extends State<profile_Screen>
         return AlertDialog(
           title: Text("  Delete Note ?"),
           content: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton(
                   onPressed: () {
