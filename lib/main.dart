@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Notes And Task Pro',
       debugShowCheckedModeBanner:false,
-      home: TermsAndConditions(),
+      home: SignIn_Page(),
     );
   }
 }

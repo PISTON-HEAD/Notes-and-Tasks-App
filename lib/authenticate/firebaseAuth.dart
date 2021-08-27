@@ -1,9 +1,11 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+int count = 0;
 
 Future signUp(String email , String password , String userName)async{
   try{
@@ -23,6 +25,19 @@ Future signUp(String email , String password , String userName)async{
         "Created Time":DateTime.now().microsecondsSinceEpoch,
         "Last SignedIn":DateTime.now().toString().toString().substring(0,16),
         "id":fireUser.uid,
+      });
+      FirebaseFirestore.instance.collection("My Task").doc(fireUser.uid).set({
+        "Task List":[],
+        "Checker":[],
+        "Time Stamp":[],
+        "Count":count,
+      });
+      FirebaseDatabase database = FirebaseDatabase.instance;
+      database.reference().child(fireUser.uid).set({
+        "Task List":[],
+        "CheckBox List":[],
+        "Time Stamp":[],
+        "Count":count,
       });
       print("Cloud Base creation Over");
       sharedPreferences.setString("id",fireUser.uid);

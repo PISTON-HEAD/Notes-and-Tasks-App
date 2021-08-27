@@ -112,7 +112,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: appBar_Main(context, "Notes and Task Pro", Colors.black),
+        appBar: appBar_Main(context, "Notes and Tasks Pro", Colors.black),
         backgroundColor: primaryColor,
         body: SingleChildScrollView(
           child: Container(
@@ -176,11 +176,13 @@ class _SignIn_PageState extends State<SignIn_Page> {
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               validator: (value) {
-                                if (RegExp(
-                                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                if (value.contains(" ")) {
+                                  return "Enter an email without space";
+                                } else if(RegExp(
+                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                                     .hasMatch(value)) {
                                   return null;
-                                } else {
+                                }else{
                                   return "Enter valid Email";
                                 }
                               },

@@ -1,142 +1,75 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
 import 'package:to_do_list/MyApp/aboutTheApp.dart';
 import 'package:to_do_list/MyApp/profile.dart';
 import 'package:to_do_list/widgets/customWidgets.dart';
-import 'package:timezone/timezone.dart' as tz;
 
 class todoListCreation extends StatefulWidget {
   final getterList;
   final checkBoxValue;
+  final Id;
 
-  const todoListCreation({Key key, this.getterList, this.checkBoxValue})
+  const todoListCreation(
+      {Key key, this.getterList, this.checkBoxValue, this.Id})
       : super(key: key);
   @override
   _todoListCreationState createState() =>
-      _todoListCreationState(getterList, checkBoxValue);
+      _todoListCreationState(getterList, checkBoxValue, Id);
 }
 
 class _todoListCreationState extends State<todoListCreation> {
-  TextEditingController editingController = new TextEditingController();
-  String ownerName;
-  List inputList = [];
-  String theList = "";
-  FirebaseAuth auth = FirebaseAuth.instance;
-  final getterList;
-  final checkBoxValue;
-  _todoListCreationState(this.getterList, this.checkBoxValue);
+  final Id;
+  _todoListCreationState(getterList, checkBoxValue, this.Id);
+
+  List taskList = [];
+  TextEditingController taskController = new TextEditingController();
+  String taskAdder = "";
   List checkBoxList = [];
-  bool checker = !true;
-  List timeStamp = [];
-  bool scheduler = !true;
-  FlutterLocalNotificationsPlugin notificationsPlugin =
-  new FlutterLocalNotificationsPlugin();
-  //notification manager
-  initializer() {
-    var androidInitialize = new AndroidInitializationSettings("icon");
-    var iosInitialize = new IOSInitializationSettings();
-    var initializeAll = new InitializationSettings(
-        android: androidInitialize, iOS: iosInitialize);
-    notificationsPlugin.initialize(initializeAll,
-        onSelectNotification: notificationSelected);
-  }
+  List timeStampList = [];
+  FirebaseAuth auth = FirebaseAuth.instance;
+  int count = 0;
+  bool deleteOnce = true;
 
-  //after the notification is tapped
-  Future notificationSelected(var payload) async {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>todoListCreation(getterList: inputList,checkBoxValue: checkBoxList,)));
-  }
 
-  //showing the notification
-  NotificationShower(String task) async {
-    var androidDetails = AndroidNotificationDetails(
-        "channelId", "channelName", "channelDescription",
-        importance: Importance.max,
-        playSound: true,
-        enableVibration: true,
-        icon: "icon",
-        showWhen: true,
-        priority: Priority.high,
-        ticker: "ticker");
-    var iosDetails = IOSNotificationDetails();
-    var platform = NotificationDetails(android: androidDetails,iOS: iosDetails,);
-    await notificationsPlugin.schedule(0, "Task Reminder", "$task", dateTimeChoosed, platform);
-  }
-
-  //creating a date and time picker for the notification
-  DateTime dateNow;
-  TimeOfDay timeNow;
-  var dateTimeChoosed;
-  //to pick the date
-  datePicker()async{
-    var picker = await showDatePicker(
-        context: context,
-        initialDate: dateNow,
-        firstDate: DateTime.now(),
-        lastDate: DateTime(DateTime.now().year + 3));
-
-    if (picker != null) {
-      setState(() {
-        dateNow = picker;
-      });
-    } else {
-      dateNow = DateTime.now();
-    }
-    timePicker();
-  }
-
-  //to pick the time
-  timePicker() async {
-    var timePicker = await showTimePicker(context: context, initialTime: timeNow);
-    if (timeNow != null) {
-      setState(() {
-        timeNow = timePicker;
-        dateTimeChoosed = DateTime(dateNow.year,dateNow.month,dateNow.day,timeNow.hour,timeNow.minute);
-        print("$dateTimeChoosed");
-      });
-    }else{timeNow = TimeOfDay.now();}
-  }
-
-  taskMaker() {
-    FirebaseFirestore.instance
-        .collection("My Task")
-        .doc(auth.currentUser.uid)
-        .set({
-      "Task List": inputList,
-      "Checker": checkBoxList,
-      "Time Stamp": timeStamp,
-    });
-  }
 
   @override
   void initState() {
-    if (getterList != null) {
-      checkBoxList = checkBoxValue;
-      print("The getter List on screen 1  in screen 2:$getterList");
-      inputList = getterList;
-    }
-    FirebaseFirestore.instance
-        .collection("My Task")
-        .doc(auth.currentUser.uid)
-        .get()        .then((value) {
-      print("This is the list on server: ${value["Task List"]}");
-      inputList = value["Task List"];
-      checkBoxList = value["Checker"];
-      timeStamp = value["Time Stamp"];
-      print("The checker Value: $checkBoxList");
-      print("The inputList after  server: $inputList");
-    });
-    initializer();
-    dateNow = DateTime.now();
-    timeNow = TimeOfDay.now();
+    getAll();
     // TODO: implement initState
     super.initState();
+  }
+
+  getAll() {
+    FirebaseDatabase.instance
+        .reference()
+        .child(auth.currentUser.uid)
+        .once()
+        .then((data) {
+      taskList = [];
+      checkBoxList = [];
+      timeStampList = [];
+      print("Database at get all");
+      print(data.value["Task List"]);
+      if (data.value["Count"] == 0) {
+        print("Init Count == 0");
+      } else {
+        for (int i = 0; i < data.value["Count"]; i++) {
+          taskList.add(data.value["Task List"][i]);
+          checkBoxList.add(data.value["CheckBox List"][i]);
+          timeStampList.add(data.value["TimeStamp List"][i]);
+        }
+      }
+    });
   }
 
   @override
@@ -209,7 +142,6 @@ class _todoListCreationState extends State<todoListCreation> {
                   auth.signOut();
                   SharedPreferences shared =
                       await SharedPreferences.getInstance();
-                  print(shared.getString("LoggedIn"));
                   shared.setString("LoggedIn", "false");
                   Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) => SignIn_Page()));
@@ -247,685 +179,388 @@ class _todoListCreationState extends State<todoListCreation> {
           ],
         ), //u normally do the appbar
         backgroundColor: CupertinoColors.label,
-        body: inputList == null
-            ? Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                  image: NetworkImage(
-                    "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",
-                  ),
-                  fit: BoxFit.cover,
-                )
-                    //https://cdn.wallpapersafari.com/5/69/ZFWaoE.jpg
-                    //https://img.freepik.com/free-photo/old-black-background-grunge-texture-dark-wallpaper-blackboard-chalkboard-room-wall_1258-28313.jpg?size=626&ext=jpg
-                    ),
-              )
-            : Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: ListView.builder(
-                  addAutomaticKeepAlives: false,
-                  scrollDirection: Axis.vertical,
-                  itemCount: inputList.length,
-                  itemBuilder: (context, index) {
-                    return inputList.isEmpty
-                        ? Container(
-                            color: Colors.red[300],
-                          )
-                        : Padding(
-                            padding:
-                                EdgeInsets.only(top: 10, left: 15, right: 15),
-                            child: Material(
-                              borderRadius: BorderRadius.circular(10),
-                              elevation: 20,
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.black87,
-                                      border: Border.all(
-                                        color: Colors.cyanAccent,
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  width: MediaQuery.of(context).size.width,
-                                  child: ListTile(
-                                    leading: checkBoxList == []
-                                        ? null
-                                        : Checkbox(
-                                            side: BorderSide(
-                                              color: Colors.white,
-                                            ),
-                                            autofocus: true,
-                                            activeColor: Colors.cyanAccent,
-                                            splashRadius: 20,
-                                            value: checkBoxList[index],
-                                            onChanged: (value) {
-                                              setState(() {
-                                                print(
-                                                    "The check Box on pressed:  $checkBoxList}");
-                                                if (checkBoxList[index] ==
-                                                    false) {
-                                                  checkBoxList[index] = true;
-                                                } else {
-                                                  checkBoxList[index] = false;
-                                                }
-                                                taskMaker();
-                                              });
-                                            },
-                                          ),
-                                    selected: true,
-                                    onTap: () {
-                                      editTask(context, index);
-                                    },
-                                    onLongPress: () {
-                                      editTask(context, index);
-                                    },
-                                    autofocus: true,
-                                    trailing: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          inputList.removeAt(index);
-                                          checkBoxList.removeAt(index);
-                                          timeStamp.removeAt(index);
-                                          taskMaker();
-                                        });
-                                      },
-                                      icon: Icon(
-                                        FontAwesomeIcons.trash,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                    title: Text(
-                                      " ${index + 1})  ${inputList[index].toString()}",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: "Merriweather",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  )),
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(
+                  "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: StreamBuilder(
+              stream: FirebaseDatabase.instance
+                  .reference()
+                  .child(auth.currentUser.uid)
+                  .orderByChild("Time Stamp")
+                  .onValue,
+              builder: (context, snapshot) {
+                return snapshot.hasData &&
+                        !snapshot.hasError &&
+                        snapshot.data.snapshot.value["Task List"] != null
+                    ? ListView.builder(
+                        addAutomaticKeepAlives: true,
+                        itemCount: snapshot.data.snapshot.value["Count"],
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.black87,
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                    "https://wallpapercave.com/wp/wp5056723.jpg"),
+                                fit: BoxFit.cover,
+                              ),
+                              border: Border.all(
+                                color: Colors.cyanAccent,
+                                width: 2,
+                              ),
+                              borderRadius: BorderRadius.circular(15),
                             ),
-                          );
-                  },
-                ),
-              ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            dateTimeChoosed = null;
-            timeNow = timeNow = TimeOfDay.now();
-            dateNow = DateTime.now();
-            showDialog(
-                context: context,
-                builder: (buildContext) {
-                  return AlertDialog(
-                    title: Text(
-                      "Enter the task",
-                      style: TextStyle(
-                        fontFamily: "Acme",
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    scrollable: true,
-                    content: TextFormField(
-                      autofocus: true,
-                      textInputAction: TextInputAction.newline,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      autocorrect: true,
-                      onChanged: (text) {
-                        theList = text;
-                      },
-                    ),
-                    actions: [
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            MaterialButton(
-                              color: Colors.grey,
-                                child: Text(dateTimeChoosed==null?"Schedule":"${dateTimeChoosed.toString().substring(0,16)}",style: TextStyle(),), onPressed: () {datePicker();}),
-                            MaterialButton(
-                              color: Colors.cyanAccent,
-                              child: Text(
-                                "Save",
+                            child: ListTile(
+                              leading: Checkbox(
+                                  side: BorderSide(
+                                    color: Colors.white,
+                                  ),
+                                  autofocus: true,
+                                  activeColor: Colors.cyanAccent,
+                                  splashRadius: 20,
+                                  value: snapshot.data.snapshot
+                                      .value["CheckBox List"][index],
+                                  onChanged: (value) {
+                                    checkBoxList = snapshot
+                                        .data.snapshot.value["CheckBox List"];
+                                    if (checkBoxList[index] == false) {
+                                      checkBoxList[index] = true;
+                                    } else {
+                                      checkBoxList[index] = false;
+                                    }
+                                    FirebaseDatabase.instance
+                                        .reference()
+                                        .child(auth.currentUser.uid)
+                                        .update({
+                                      "CheckBox List": checkBoxList,
+                                    });
+                                  }),
+                              title: Text(
+                                "${index+1}) ${snapshot.data.snapshot.value["Task List"][index]}",
                                 style: TextStyle(
-                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
                                   fontFamily: "Merriweather",
+                                  fontSize: 15.5,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              onPressed: () {
-                                if (theList == "") {
-                                  theList = "";
-                                  timeNow = timeNow = TimeOfDay.now();
-                                  dateNow = DateTime.now();
-                                } else {
-                                  setState(() {
-                                    inputList.add(theList);
-                                    theList = "";
-                                    checkBoxList.add(false);
-                                    timeStamp.add(DateTime.now()
-                                        .toString()
-                                        .substring(0, 16));
-                                    taskMaker();
-                                  });
-                                  dateTimeChoosed==null?dateTimeChoosed=null:NotificationShower(inputList[inputList.length-1]);
-                                  timeNow = timeNow = TimeOfDay.now();
-                                  dateNow = DateTime.now();
-                                }
-                                Navigator.of(context).pop();
+                              trailing: IconButton(
+                                onPressed: () {
+                                  DeleteTask(context, snapshot, index);
+                                },
+                                icon: Icon(
+                                  FontAwesomeIcons.trash,
+                                  color: Colors.red,
+                                ),
+                              ),
+                              onLongPress: (){
+                                DeleteTask(context, snapshot, index);
+                              },
+                              onTap: () {
+                                getAll();
+                                taskController = TextEditingController(
+                                    text: snapshot.data.snapshot
+                                        .value["Task List"][index]);
+                                taskEditor(context, snapshot, index);
                               },
                             ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                });
-          },
+                          );
+                        },
+                      )
+                    : Container();
+              }),
+        ),
+        floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.cyanAccent,
-          highlightElevation: 20,
+          highlightElevation: 15,
           autofocus: true,
           child: Icon(
             FontAwesomeIcons.plus,
             color: Colors.black,
-            size: 25,
+            size: 23,
           ),
-        ),
-      ),
-    );
-  }
-
-  Future<dynamic> editTask(BuildContext context, int index) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          editingController = TextEditingController(text: inputList[index]);
-          return AlertDialog(
-            title: Text(
-              "Edit",
-              style: TextStyle(
-                fontFamily: "Acme",
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            content: TextFormField(
-              autofocus: true,
-              textInputAction: TextInputAction.newline,
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              controller: editingController,
-              onChanged: (value) {
-                theList = value;
-              },
-            ),
-            actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    """Edited on: 
-${timeStamp[index].toString().substring(8, 10)}${timeStamp[index].toString().substring(4, 8)}${timeStamp[index].toString().substring(0, 4)}${timeStamp[index].toString().substring(10)}""",
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: "Cinzel"),
-                  ),
-                  MaterialButton(
-                    child: Text(
-                      "Save",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: "Merriweather",
-                      ),
-                    ),
-                    color: Colors.cyanAccent,
-                    onPressed: () {
-                      setState(() {
-                        if (theList.length != 0) {
-                          inputList[index] = theList;
-                          //checkBoxList[index] = false;
-                          timeStamp[index] =
-                              (DateTime.now().toString().substring(0, 16));
-                          taskMaker();
-                        }
-                        theList = "";
-                      });
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-            ],
-          );
-        });
-  }
-}
-
-/*
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
-import 'package:to_do_list/MyApp/aboutTheApp.dart';
-import 'package:to_do_list/MyApp/profile.dart';
-import 'package:to_do_list/widgets/customWidgets.dart';
-
-class todoListCreation extends StatefulWidget {
-  final getterList;
-  final checkBoxValue;
-
-  const todoListCreation({Key key, this.getterList, this.checkBoxValue})
-      : super(key: key);
-  @override
-  _todoListCreationState createState() =>
-      _todoListCreationState(getterList, checkBoxValue);
-}
-
-class _todoListCreationState extends State<todoListCreation> {
-  TextEditingController editingController = new TextEditingController();
-  String ownerName;
-  List inputList = [];
-  String theList = "";
-  FirebaseAuth auth = FirebaseAuth.instance;
-  final getterList;
-  final checkBoxValue;
-  _todoListCreationState(this.getterList, this.checkBoxValue);
-  List checkBoxList = [];
-  bool checker = !true;
-  List timeStamp = [];
-
-  taskMaker() {
-    FirebaseFirestore.instance
-        .collection("My Task")
-        .doc(auth.currentUser.uid)
-        .set({
-      "Task List": inputList,
-      "Checker": checkBoxList,
-      "Time Stamp":timeStamp,
-    });
-  }
-
-  @override
-  void initState() {
-    if (getterList != null) {
-      checkBoxList = checkBoxValue;
-      print("The getter List on screen 1  in screen 2:$getterList");
-      inputList = getterList;
-    }
-    FirebaseFirestore.instance
-        .collection("My Task")
-        .doc(auth.currentUser.uid)
-        .get()
-        .then((value) {
-      print("This is the list on server: ${value["Task List"]}");
-      inputList = value["Task List"];
-      checkBoxList = value["Checker"];
-      timeStamp = value["Time Stamp"];
-      print("The checker Value: $checkBoxList");
-      print("The inputList after  server: $inputList");
-    });
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Column(
-            children: [
-              Text(
-                "Tasks",
-                style: appBar_Style,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  MaterialButton(
-                    onPressed: () {
-                      //Navigator.of(context).pop();
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => profile_Screen()));
-                    },
-                    child: Icon(
-                      FontAwesomeIcons.stickyNote,
-                      color: Colors.grey,
-                      size: 28.8,
-                    ),
-                  ),
-                  MaterialButton(
-                      autofocus: true,
-                      child: Icon(
-                        FontAwesomeIcons.solidClipboard,
-                        color: Colors.limeAccent,
-                        size: 28.8,
-                      ),
-                      onPressed: () {}),
-                ],
-              ),
-            ],
-          ),
-          backgroundColor: CupertinoColors.black,
-          toolbarHeight: 85,
-          elevation: 10,
-          actions: [
-            PopupMenuButton(
-              color: CupertinoColors.systemTeal,
-              icon: Icon(
-                Icons.more_vert_sharp,
-                color: Colors.white70,
-                size: 30,
-              ),
-              onSelected: (value) async {
-                if (value == 0) {
-                  print("About App");
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AppInfo(value: value)));
-                } else if (value == 1) {
-                  print("About Developers");
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AppInfo(value: value)));
-                } else if (value == 3) {
-                  print("Log Out");
-                  auth.signOut();
-                  SharedPreferences shared =
-                      await SharedPreferences.getInstance();
-                  print(shared.getString("LoggedIn"));
-                  shared.setString("LoggedIn", "false");
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => SignIn_Page()));
-                } else if (value == 2) {
-                  print("Privacy Policy");
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AppInfo(value: value)));
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  textStyle: popStyle(),
-                  child: Text("About App"),
-                  value: 0,
-                ),
-                PopupMenuItem(
-                  textStyle: popStyle(),
-                  child: Text("About Developers"),
-                  value: 1,
-                ),
-                PopupMenuItem(
-                  textStyle: popStyle(),
-                  child: Text("Privacy Policy"),
-                  value: 2,
-                ),
-                PopupMenuItem(
-                  textStyle: popStyle(),
-                  child: Text("Log Out"),
-                  value: 3,
-                ),
-              ],
-            ),
-          ],
-        ), //u normally do the appbar
-        backgroundColor: CupertinoColors.label,
-        body: inputList == null
-            ? Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                  image: NetworkImage(
-                    "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",
-                  ),
-                  fit: BoxFit.cover,
-                )
-                    //https://cdn.wallpapersafari.com/5/69/ZFWaoE.jpg
-                    //https://img.freepik.com/free-photo/old-black-background-grunge-texture-dark-wallpaper-blackboard-chalkboard-room-wall_1258-28313.jpg?size=626&ext=jpg
-                    ),
-              )
-            : Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                  image: NetworkImage(
-                    "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",
-                  ),
-                  fit: BoxFit.cover,
-                ),
-                    ),
-                child: ListView.builder(
-                  addAutomaticKeepAlives: false,
-                  scrollDirection: Axis.vertical,
-                  itemCount: inputList.length,
-                  itemBuilder: (context, index) {
-                    return inputList.isEmpty
-                        ? Container(
-                            color: Colors.red[300],
-                          )
-                        : Padding(
-                            padding:
-                                EdgeInsets.only(top: 10, left: 15, right: 15),
-                            child: Material(
-                              borderRadius: BorderRadius.circular(10),
-                              elevation: 20,
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.black87,
-                                      border: Border.all(
-                                        color: Colors.cyanAccent,
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  width: MediaQuery.of(context).size.width,
-                                  child: ListTile(
-                                    leading: checkBoxList == []
-                                        ? null
-                                        : Checkbox(
-                                            side: BorderSide(
-                                              color: Colors.white,
-                                            ),
-                                            autofocus: true,
-                                            activeColor: Colors.cyanAccent,
-                                            splashRadius: 20,
-                                            value: checkBoxList[index],
-                                            onChanged: (value) {
-                                              setState(() {
-                                                print(
-                                                    "The check Box on pressed:  $checkBoxList}");
-                                                if (checkBoxList[index] ==
-                                                    false) {
-                                                  checkBoxList[index] = true;
-                                                } else {
-                                                  checkBoxList[index] = false;
-                                                }
-                                                taskMaker();
-                                              });
-                                            },
-                                          ),
-                                    selected: true,
-                                    onTap: (){
-                                      editTask(context, index);
-                                    },
-                                    onLongPress: () {
-                                      editTask(context, index);
-                                    },
-                                    autofocus: true,
-                                    trailing: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          inputList.removeAt(index);
-                                          checkBoxList.removeAt(index);
-                                          timeStamp.removeAt(index);
-                                          print(timeStamp);
-                                          taskMaker();
-                                        });
-                                      },
-                                      icon: Icon(
-                                        FontAwesomeIcons.trash,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                    title: Text(
-                                      " ${index + 1})  ${inputList[index].toString()}",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: "Merriweather",
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  )),
-                            ),
-                          );
-                  },
-                ),
-              ),
-        floatingActionButton: FloatingActionButton(
           onPressed: () {
+            taskController.text="";
             showDialog(
                 context: context,
-                builder: (buildContext) {
+                builder: (BuildContext context) {
                   return AlertDialog(
+                    scrollable: true,
                     title: Text(
-                      "Enter the task",
+                      "Add New Task",
                       style: TextStyle(
                         fontFamily: "Acme",
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    scrollable: true,
                     content: TextFormField(
+                      onChanged: (value){
+                        print(value);
+                      },
+                      autofocus: true,
+                      maxLines: null,
                       textInputAction: TextInputAction.newline,
                       keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      autofocus: true,
-                      autocorrect: true,
-                      onChanged: (text) {
-                        theList = text;
-                      },
+                      controller: taskController,
                     ),
                     actions: [
-                      MaterialButton(
-                        color: Colors.cyanAccent,
+                      TextButton(
                         child: Text(
                           "Save",
-                          style: TextStyle(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontFamily: "Merriweather",
+                          ),
                         ),
                         onPressed: () {
-                          if (theList == "") {
-                            theList = "";
-                          } else {
-                            setState(() {
-                              inputList.add(theList);
-                              theList = "";
-                              checkBoxList.add(false);
-                              timeStamp.add(DateTime.now().toString().substring(0,16));
-                              taskMaker();
-                            });
-                          }
-                          Navigator.of(context).pop();
+                          FirebaseDatabase.instance
+                              .reference()
+                              .child(auth.currentUser.uid)
+                              .once()
+                              .then((data) {
+                            taskList = [];
+                            checkBoxList = [];
+                            timeStampList = [];
+                            print("Database at get all");
+                            print(data.value["Task List"]);
+                            if (data.value["Count"] == 0) {
+                              print("Init Count == 0");
+                            } else {
+                              for (int i = 0; i < data.value["Count"]; i++) {
+                                taskList.add(data.value["Task List"][i]);
+                                checkBoxList
+                                    .add(data.value["CheckBox List"][i]);
+                                timeStampList
+                                    .add(data.value["TimeStamp List"][i]);
+                              }
+                            }
+                          }).whenComplete(() {
+                            print("This taskList at save get All \n $taskList");
+                            taskList.add(taskController.text);
+                            checkBoxList.add(false);
+                            timeStampList.add(DateTime.now().toString());
+                            count = taskList.length;
+                            print("Task List ==> $taskList");
+                            print("CheckBox List ==> $checkBoxList");
+                            print("Time Stamp List ==> $timeStampList");
+                            print("Count ==> $count");
+                            taskController.text = "";
+                            FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).set(
+                                {
+                                  "Task List":taskList,
+                                  "Count":taskList.length,
+                                  "Checker":checkBoxList,
+                                  "Time Stamp":timeStampList,
+                                });
+                            FirebaseDatabase.instance
+                                .reference()
+                                .child(auth.currentUser.uid)
+                                .set({
+                              "Count": count,
+                              "Task List": taskList,
+                              "CheckBox List": checkBoxList,
+                              "TimeStamp List": timeStampList,
+                            }).whenComplete(() => Navigator.of(context).pop());
+                          });
                         },
-                      ),
+                      )
                     ],
                   );
                 });
           },
-          backgroundColor: Colors.cyanAccent,
-          highlightElevation: 20,
-          autofocus: true,
-          child: Icon(
-            FontAwesomeIcons.plus,
-            color: Colors.white,
-            size: 30,
-          ),
         ),
       ),
     );
   }
 
-  Future<dynamic> editTask(BuildContext context, int index) {
-    return showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          editingController =
-                                              TextEditingController(
-                                                  text: inputList[index]);
-                                          return AlertDialog(
-                                            title: Text("Edit",style: TextStyle(
-                                              fontFamily: "Acme",
-                                              fontSize: 28,
-                                              fontWeight: FontWeight.bold,
-                                            ),),
-                                            content: TextFormField(
-                                              autofocus: true,
-                                              textInputAction:
-                                                  TextInputAction.newline,
-                                              keyboardType:
-                                                  TextInputType.multiline,
-                                              maxLines: null,
-                                              controller: editingController,
-                                              onChanged: (value) {
-                                                theList = value;
+  Future<dynamic> DeleteTask(BuildContext context, AsyncSnapshot<dynamic> snapshot, int index) {
+    return showDialog(context: context, builder: (BuildContext context){
+                                  return AlertDialog(
+                                    scrollable: true,
+                                    title: Text("Delete Task",style:TextStyle(
+                                      fontFamily: "Acme",
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                                    content: RichText(
+                                      text: TextSpan(text: "Completion Status: ",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: "Merriweather",
+                                          color: Colors.black,
+                                        ),
+                                        children:[
+                                          TextSpan(
+                                            text: snapshot.data.snapshot.value["CheckBox List"][index] ? "Completed" : "Not Completed",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w700,
+                                              color: snapshot.data.snapshot.value["CheckBox List"][index] ? Colors.green : Colors.red,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Container(
+                                            child: TextButton(
+                                              style: TextButton.styleFrom(
+                                                primary: Colors.red,
+                                              ),
+                                              child: Text("Delete",style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w600,
+                                              ),),
+                                              onPressed: (){
+                                                print("The delete: $deleteOnce");
+                                                if(deleteOnce == true){
+                                                  deleteOnce =  false;
+                                                  taskList = [];
+                                                  checkBoxList = [];
+                                                  timeStampList = [];
+                                                  for (int i = 0;
+                                                  i <
+                                                      snapshot.data.snapshot
+                                                          .value["Task List"].length;
+                                                  i++) {
+                                                    if (i != index) {
+                                                      taskList.add(snapshot
+                                                          .data.snapshot.value["Task List"][i]);
+                                                      checkBoxList.add(snapshot.data.snapshot
+                                                          .value["CheckBox List"][i]);
+                                                      timeStampList.add(snapshot.data.snapshot
+                                                          .value["TimeStamp List"][i]);
+                                                    }
+                                                  }
+                                                  // FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).set(
+                                                  //     {
+                                                  //       "Task List":taskList,
+                                                  //       "Count":taskList.length,
+                                                  //       "Checker":checkBoxList,
+                                                  //       "Time Stamp":timeStampList,
+                                                  //     });
+                                                  FirebaseDatabase.instance
+                                                      .reference()
+                                                      .child(auth.currentUser.uid)
+                                                      .update({
+                                                    "Task List": taskList,
+                                                    "TimeStamp List": timeStampList,
+                                                    "CheckBox List": checkBoxList,
+                                                    "Count": taskList.length,
+                                                  }).whenComplete((){
+                                                    deleteOnce = true;
+                                                    Navigator.of(context).pop();
+                                                  });
+                                                }
                                               },
                                             ),
+                                          ),
+                                          Container(
+                                            child: TextButton(
+                                              child: Text("Cancel",style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w600,
+                                              ),),
+                                              onPressed: (){
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                });
+  }
 
-                                            actions: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                children: [
-                                                  Text("""Edited on:
-${timeStamp[index].toString().substring(8,10)}${timeStamp[index].toString().substring(4,9)}${timeStamp[index].toString().substring(1,4)}${timeStamp[index].toString().substring(10)}""",style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w700,
-                                                    fontFamily: "Cinzel"
-                                                  ),),
-                                                  MaterialButton(
-                                                    child: Text("Save",style:TextStyle(
-                                                      fontSize: 15,
-                                                        fontWeight: FontWeight.w700,
-                                                        fontFamily: "Merriweather",
-                                                    ),),
-                                                    color: Colors.cyanAccent,
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        if (theList.length != 0) {
-                                                          inputList[index] =
-                                                              theList;
-                                                          //checkBoxList[index] = false;
-                                                          timeStamp[index] = (DateTime.now().toString().substring(0,16));
-                                                          taskMaker();
-                                                        }
-                                                        theList = "";
-                                                      });
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                  ),
-                                                ],
+  Future<dynamic> taskEditor(BuildContext context, AsyncSnapshot<dynamic> snapshot, int index) {
+    return showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    String AmPm = snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(11,13);
+                                    if(AmPm == "13"){AmPm = "01"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "14"){AmPm = "02"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "15"){AmPm = "03"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "16"){AmPm = "04"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "17"){AmPm = "05"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "18"){AmPm = "06"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "19"){AmPm = "07"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "20"){AmPm = "08"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "21"){AmPm = "09"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "22"){AmPm = "10"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "23"){AmPm = "11"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "24"){AmPm = "12"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}
+                                      return AlertDialog(
+                                      scrollable: true,
+                                      title: Text(
+                                        "Edit Task",
+                                        style: TextStyle(
+                                          fontFamily: "Acme",
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      content: Column(
+                                        children: [
+                                          TextFormField(
+                                            onChanged:(value){},
+                                            autofocus: true,
+                                            maxLines: null,
+                                            textInputAction:
+                                                TextInputAction.newline,
+                                            keyboardType: TextInputType.multiline,
+                                            controller: taskController,
+                                          ),
+                                        ],
+                                      ),
+                                      actions: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text("""Edited On:
+${snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(8,10)}${snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(4,7)}-${snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(2,4) }  $AmPm""",
+                                            style:TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: "Cinzel"),
+                                    ),
+                                            MaterialButton(
+                                              color: Colors.cyanAccent,
+                                              child: Text(
+                                                "Save",
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontFamily: "Merriweather",
+                                                ),
                                               ),
-                                            ],
-                                          );
-                                        });
+                                              onPressed: (){
+                                                if(taskController.text != "" && taskController.text != snapshot.data.snapshot.value["Task List"][index]){
+                                                  taskList[index] = taskController.text;
+                                                  print("This is taskList at edited area ==> $taskList");
+                                                  timeStampList[index] = DateTime.now().toString();
+                                                  taskController.text = "";
+                                                  FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).set(
+                                                      {
+                                                        "Task List":taskList,
+                                                        "Count":taskList.length,
+                                                        "Checker":checkBoxList,
+                                                        "Time Stamp":timeStampList,
+                                                      });
+                                                  FirebaseDatabase.instance.reference().child(auth.currentUser.uid).update(
+                                                      {
+                                                        "Task List":taskList,
+                                                        "TimeStamp List":timeStampList,
+                                                      }).whenComplete(() => Navigator.of(context).pop());
+                                                }else{
+                                                  Navigator.of(context).pop();
+                                                }
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  });
   }
 }
-
-
- */
