@@ -230,18 +230,20 @@ class _profile_ScreenState extends State<profile_Screen>
                       itemCount:
                           snapshot.hasData ? snapshot.data.docs.length : 0,
                       itemBuilder: (context, index) {
+                        var count = snapshot.data.docs.length;
                         return GestureDetector(
                           onTap: () {
-                            print(snapshot.data.docs[index]["Title"]);
+                            print(snapshot.data.docs[count - 1 - index]["Title"]);
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => SeeNote(
-                                          getDoc: snapshot.data.docs[index],
+                                          getDoc: snapshot.data.docs[count - 1 - index],
                                         )));
                           },
                           onLongPress: () {
-                            buildShowDialog(context, snapshot, index);
+                            int delete = count - 1 - index;
+                            buildShowDialog(context, snapshot, delete);
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -263,7 +265,7 @@ class _profile_ScreenState extends State<profile_Screen>
                               child: ListTile(
                                 autofocus: true,
                                 subtitle: Text(
-                                  snapshot.data.docs[index]["Content"],
+                                  snapshot.data.docs[count - 1 - index]["Content"],
                                   style: TextStyle(
                                       color: Color.fromARGB(255, 152, 151, 158),
                                       fontWeight: FontWeight.w800,
@@ -272,7 +274,7 @@ class _profile_ScreenState extends State<profile_Screen>
                                       fontFamily: "Merriweather"),
                                 ),
                                 title: Text(
-                                  snapshot.data.docs[index]["Title"].toString().toLowerCase(),
+                                  snapshot.data.docs[count - 1 - index]["Title"].toString().toLowerCase(),
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,

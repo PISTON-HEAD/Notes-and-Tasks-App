@@ -320,7 +320,8 @@ class _todoListCreationState extends State<todoListCreation> {
                           ),
                         ),
                         onPressed: () {
-                          FirebaseDatabase.instance
+                          if(taskController.text != ""){
+                            FirebaseDatabase.instance
                               .reference()
                               .child(auth.currentUser.uid)
                               .once()
@@ -368,7 +369,9 @@ class _todoListCreationState extends State<todoListCreation> {
                               "CheckBox List": checkBoxList,
                               "TimeStamp List": timeStampList,
                             }).whenComplete(() => Navigator.of(context).pop());
-                          });
+                          });}else{
+                            Navigator.of(context).pop();
+                          }
                         },
                       )
                     ],
@@ -388,27 +391,8 @@ class _todoListCreationState extends State<todoListCreation> {
                                       fontFamily: "Acme",
                                       fontSize: 28,
                                       fontWeight: FontWeight.bold,
-                                    )),
-                                    content: RichText(
-                                      text: TextSpan(text: "Completion Status: ",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w700,
-                                          fontFamily: "Merriweather",
-                                          color: Colors.black,
-                                        ),
-                                        children:[
-                                          TextSpan(
-                                            text: snapshot.data.snapshot.value["CheckBox List"][index] ? "Completed" : "Not Completed",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w700,
-                                              color: snapshot.data.snapshot.value["CheckBox List"][index] ? Colors.green : Colors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                    ),),
+                                    content: CompletionStatus(snapshot, index),
                                     actions: [
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -484,12 +468,37 @@ class _todoListCreationState extends State<todoListCreation> {
                                 });
   }
 
+  RichText CompletionStatus(AsyncSnapshot<dynamic> snapshot, int index) {
+    return RichText(
+                                    text: TextSpan(text: "Completion Status: ",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: "Merriweather",
+                                        color: Colors.black,
+                                      ),
+                                      children:[
+                                        TextSpan(
+                                          text: snapshot.data.snapshot.value["CheckBox List"][index] ? "Completed" : "Not Completed",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                            color: snapshot.data.snapshot.value["CheckBox List"][index] ? Colors.green : Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+  }
+
   Future<dynamic> taskEditor(BuildContext context, AsyncSnapshot<dynamic> snapshot, int index) {
     return showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     String AmPm = snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(11,13);
-                                    if(AmPm == "13"){AmPm = "01"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "14"){AmPm = "02"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "15"){AmPm = "03"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "16"){AmPm = "04"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "17"){AmPm = "05"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "18"){AmPm = "06"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "19"){AmPm = "07"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "20"){AmPm = "08"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "21"){AmPm = "09"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "22"){AmPm = "10"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "23"){AmPm = "11"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "24"){AmPm = "12"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}
+                                    if(AmPm == "13"){AmPm = "01"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "14"){AmPm = "02"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "15"){AmPm = "03"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "16"){AmPm = "04"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "17"){AmPm = "05"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "18"){AmPm = "06"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "19"){AmPm = "07"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "20"){AmPm = "08"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "21"){AmPm = "09"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "22"){AmPm = "10"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "23"){AmPm = "11"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "24"){AmPm = "12"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else{
+                                      AmPm = snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(11,16);
+                                    }
                                       return AlertDialog(
                                       scrollable: true,
                                       title: Text(
@@ -503,7 +512,26 @@ class _todoListCreationState extends State<todoListCreation> {
                                       content: Column(
                                         children: [
                                           TextFormField(
-                                            onChanged:(value){},
+                                            onChanged:(value){
+                                              print( "This real time ${taskController.text}");
+                                              if(taskController.text != "" && taskController.text != snapshot.data.snapshot.value["Task List"][index]){
+                                                taskList[index] = taskController.text;
+                                                print("This is taskList at edited area ==> $taskList");
+                                                timeStampList[index] = DateTime.now().toString();
+                                                FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).set(
+                                                    {
+                                                      "Task List":taskList,
+                                                      "Count":taskList.length,
+                                                      "Checker":checkBoxList,
+                                                      "Time Stamp":timeStampList,
+                                                    });
+                                                FirebaseDatabase.instance.reference().child(auth.currentUser.uid).update(
+                                                    {
+                                                      "Task List":taskList,
+                                                      "TimeStamp List":timeStampList,
+                                                    });
+                                              }
+                                            },
                                             autofocus: true,
                                             maxLines: null,
                                             textInputAction:
@@ -511,6 +539,8 @@ class _todoListCreationState extends State<todoListCreation> {
                                             keyboardType: TextInputType.multiline,
                                             controller: taskController,
                                           ),
+                                          SizedBox(height:15),
+                                          CompletionStatus(snapshot, index),
                                         ],
                                       ),
                                       actions: [

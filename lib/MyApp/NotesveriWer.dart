@@ -29,12 +29,20 @@ class _SeeNoteState extends State<SeeNote> {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   notesUpdater() {
-    widget.getDoc.reference.update({
-      "Title": titleEditingController.text,
-      "Content": notesEditingController.text,
-      "Time": DateTime.now().toString(),
-    }).whenComplete(() => Navigator.of(context).pop());
+    widget.getDoc.reference
+        .delete();
+    FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).collection("Notes").doc(DateTime.now().toString()).set({
+      "Title":titleEditingController.text,
+      "Content":notesEditingController.text,
+      "Time":DateTime.now().toString(),
+    }).whenComplete(() =>Navigator.of(context).pop());
   }
+  String AmPm = "";
+  timeChanger(){
+    if(AmPm == "13"){AmPm = "01"+timeEditingController.text.toString().substring(13,16)+" PM";}else if(AmPm == "14"){AmPm = "02"+timeEditingController.text.toString().substring(13,16)+" PM";}else if(AmPm == "15"){AmPm = "03"+timeEditingController.text.toString().substring(13,16)+" PM";}else if(AmPm == "16"){AmPm = "04"+timeEditingController.text.toString().substring(13,16)+" PM";}else if(AmPm == "17"){AmPm = "05"+timeEditingController.text.toString().substring(13,16)+" PM";}else if(AmPm == "18"){AmPm = "06"+timeEditingController.text.toString().substring(13,16)+" PM";}else if(AmPm == "19"){AmPm = "07"+timeEditingController.text.toString().substring(13,16)+" PM";}else if(AmPm == "20"){AmPm = "08"+timeEditingController.text.toString().substring(13,16)+" PM";}else if(AmPm == "21"){AmPm = "09"+timeEditingController.text.toString().substring(13,16)+" PM";}else if(AmPm == "22"){AmPm = "10"+timeEditingController.text.toString().substring(13,16)+" PM";}else if(AmPm == "23"){AmPm = "11"+timeEditingController.text.toString().substring(13,16)+" PM";}else if(AmPm == "00"){AmPm = "12"+timeEditingController.text.toString().substring(13,16)+" AM";}else{
+      AmPm = timeEditingController.text.toString().substring(11,16);
+    }
+    }
 
   @override
   void initState() {
@@ -43,6 +51,8 @@ class _SeeNoteState extends State<SeeNote> {
     notesEditingController =
         TextEditingController(text: widget.getDoc["Content"]);
     timeEditingController = TextEditingController(text: widget.getDoc["Time"]);
+    AmPm = timeEditingController.text.toString().substring(11,13);
+    timeChanger();
     // TODO: implement initState
     super.initState();
   }
@@ -54,9 +64,9 @@ class _SeeNoteState extends State<SeeNote> {
         toolbarOpacity: 1,
         backgroundColor: Colors.blueGrey,
         title: Text(
-          "Edited on: ${timeEditingController.text.toString().substring(8, 10)}${timeEditingController.text.toString().substring(4, 8)}${timeEditingController.text.toString().substring(0, 4)}${timeEditingController.text.toString().substring(10,16)}",
+          "Edited on: ${timeEditingController.text.toString().substring(8, 10)}${timeEditingController.text.toString().substring(4, 8)}${timeEditingController.text.toString().substring(0, 4)} $AmPm",
           style: TextStyle(
-            fontSize: 15,
+            fontSize: 13,
             color: Colors.white,
           ),
         ),
@@ -70,9 +80,11 @@ class _SeeNoteState extends State<SeeNote> {
                 color: Colors.white),
           ),
           onPressed: () {
-            if (formKey.currentState.validate()) {
-              print("Title Name: ${titleEditingController.text}");
-              notesUpdater();
+            if (formKey.currentState.validate() ) {
+              if(titleEditingController.text != widget.getDoc["Title"] || notesEditingController.text != widget.getDoc["Content"]){
+                print("Title Name: ${titleEditingController.text}");
+                notesUpdater();
+              }else{Navigator.of(context).pop();}
             }
           },
         ),
