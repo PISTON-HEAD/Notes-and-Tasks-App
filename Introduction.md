@@ -1,10 +1,8 @@
-# to_do_list
+Notes and Tasks Pro
 
-A new Flutter project.
+A Flutter app development project.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
+Developers: A. Siva Kailash and C.K. Gokul Krishna
 
 A few resources to get you started if this is your first Flutter project:
 
