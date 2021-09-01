@@ -66,7 +66,7 @@ class _SeeNoteState extends State<SeeNote> {
         title: Text(
           "Edited on: ${timeEditingController.text.toString().substring(8, 10)}${timeEditingController.text.toString().substring(4, 8)}${timeEditingController.text.toString().substring(0, 4)} $AmPm",
           style: TextStyle(
-            fontSize: 13,
+            fontSize: 12,
             color: Colors.white,
           ),
         ),
@@ -92,65 +92,63 @@ class _SeeNoteState extends State<SeeNote> {
           PopupMenuButton(
             icon: Icon(Icons.more_vert_outlined),
             color: Colors.blueGrey,
-            itemBuilder:(context)=>[
-              PopupMenuItem(
-                value: 0,
-                child: MaterialButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text("  Delete Note ?"),
-                            content: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                TextButton(
-                                    onPressed: () {
-                                      print("Deleting");
-                                      widget.getDoc.reference
-                                          .delete()
-                                          .whenComplete(() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => profile_Screen())));
-                                    },
-                                    autofocus: true,
-                                    style: ButtonStyle(),
-                                    child: Text("Delete")),
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text("Cancel")),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    child: Text("Delete",style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),),
-
-                ),
-              ),
-              PopupMenuItem(
-                child: MaterialButton(
-                  onPressed: ()async{
-                    await FlutterShare.share(
-                      title: titleEditingController.text,
-                      text: """
+            onSelected:(value)async{
+              if(value == 0){
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text("  Delete Note ?"),
+                      content: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          TextButton(
+                              onPressed: () {
+                                print("Deleting");
+                                widget.getDoc.reference
+                                    .delete()
+                                    .whenComplete(() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => profile_Screen())));
+                              },
+                              autofocus: true,
+                              style: ButtonStyle(),
+                              child: Text("Delete")),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("Cancel")),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }else{
+                await FlutterShare.share(
+                  title: titleEditingController.text,
+                  text: """
                         ${titleEditingController.text}
                         ${notesEditingController.text}
                               """,
-                      chooserTitle:titleEditingController.text,).whenComplete(() =>{
-                      Navigator.of(context).pop(),
-                    });
-                  },
-                  child: Text("Share",style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),),
-                ),
+                  chooserTitle:titleEditingController.text,).whenComplete(() =>{
+                  Navigator.of(context).pop(),
+                });
+              }
+            },
+            enabled: true,
+            itemBuilder:(context)=>[
+              PopupMenuItem(
+                value: 0,
+                child: Text("Delete",style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),),
+              ),
+              PopupMenuItem(
+                value: 1,
+                child: Text("Share",style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),),
               ),
             ],
           ),
@@ -179,7 +177,7 @@ class _SeeNoteState extends State<SeeNote> {
                     },
                     controller: titleEditingController,
                     style: TextStyle(
-                        fontFamily: "Merrieather",
+                        fontFamily: "Merriweather",
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         fontSize: 24),
@@ -188,7 +186,7 @@ class _SeeNoteState extends State<SeeNote> {
                         hintStyle: notesTitle(Colors.grey, 24),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                            color: Colors.cyanAccent,
+                            color: Colors.yellow,
                             width: 1.5,
                           ),
                         ),

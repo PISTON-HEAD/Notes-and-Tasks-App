@@ -261,26 +261,28 @@ class _profile_ScreenState extends State<profile_Screen>
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   bottom:
-                                      55.0), //here is the padding for content
-                              child: ListTile(
-                                autofocus: true,
-                                subtitle: Text(
-                                  snapshot.data.docs[count - 1 - index]["Content"],
-                                  style: TextStyle(
-                                      color: Color.fromARGB(255, 152, 151, 158),
-                                      fontWeight: FontWeight.w800,
-                                      decorationThickness: 2.5,
-                                      fontSize: 12,
-                                      fontFamily: "Merriweather"),
-                                ),
-                                title: Text(
-                                  snapshot.data.docs[count - 1 - index]["Title"].toString().toLowerCase(),
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      decorationThickness: 2.5,
-                                      fontSize: 22,
-                                      fontFamily: "ZenTokyoZoo"),
+                                      25.0), //here is the padding for content
+                              child: SingleChildScrollView(
+                                child: ListTile(
+                                  autofocus: true,
+                                  subtitle: Text(
+                                    snapshot.data.docs[count - 1 - index]["Content"],
+                                    style: TextStyle(
+                                        color: Color.fromARGB(255, 152, 151, 158),
+                                        fontWeight: FontWeight.w800,
+                                        decorationThickness: 2.5,
+                                        fontSize: 12,
+                                        fontFamily: "Merriweather"),
+                                  ),
+                                  title: Text(
+                                    snapshot.data.docs[count - 1 - index]["Title"].toString().toLowerCase(),
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        decorationThickness: 2.5,
+                                        fontSize: 22,
+                                        fontFamily: "ZenTokyoZoo"),
+                                  ),
                                 ),
                               ),
                             ),

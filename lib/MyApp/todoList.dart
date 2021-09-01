@@ -202,7 +202,7 @@ class _todoListCreationState extends State<todoListCreation> {
                         itemCount: snapshot.data.snapshot.value["Count"],
                         itemBuilder: (context, index) {
                           return Container(
-                            margin: EdgeInsets.all(10),
+                            margin: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: Colors.black87,
                               image: DecorationImage(
@@ -495,6 +495,8 @@ class _todoListCreationState extends State<todoListCreation> {
     return showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
+                                    String q = snapshot.data.snapshot
+                                        .value["Task List"][index];
                                     String AmPm = snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(11,13);
                                     if(AmPm == "13"){AmPm = "01"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "14"){AmPm = "02"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "15"){AmPm = "03"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "16"){AmPm = "04"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "17"){AmPm = "05"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "18"){AmPm = "06"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "19"){AmPm = "07"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "20"){AmPm = "08"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "21"){AmPm = "09"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "22"){AmPm = "10"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "23"){AmPm = "11"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else if(AmPm == "24"){AmPm = "12"+snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(13,16) + " PM";}else{
                                       AmPm = snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(11,16);
@@ -513,24 +515,27 @@ class _todoListCreationState extends State<todoListCreation> {
                                         children: [
                                           TextFormField(
                                             onChanged:(value){
-                                              print( "This real time ${taskController.text}");
+                                              // print( "This real time ${taskController.text}");
                                               if(taskController.text != "" && taskController.text != snapshot.data.snapshot.value["Task List"][index]){
                                                 taskList[index] = taskController.text;
-                                                print("This is taskList at edited area ==> $taskList");
+                                                // print("This is taskList at edited area ==> $taskList");
                                                 timeStampList[index] = DateTime.now().toString();
-                                                FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).set(
+                                                FirebaseDatabase.instance.reference().child(auth.currentUser.uid).update(
                                                     {
                                                       "Task List":taskList,
-                                                      "Count":taskList.length,
-                                                      "Checker":checkBoxList,
-                                                      "Time Stamp":timeStampList,
+                                                      "TimeStamp List":timeStampList,
                                                     });
+                                              }else if(taskController.text == ""){
+                                                taskList[index] = q;
+                                                // print("This is taskList at edited area ==> $taskList");
+                                                timeStampList[index] = DateTime.now().toString();
                                                 FirebaseDatabase.instance.reference().child(auth.currentUser.uid).update(
                                                     {
                                                       "Task List":taskList,
                                                       "TimeStamp List":timeStampList,
                                                     });
                                               }
+
                                             },
                                             autofocus: true,
                                             maxLines: null,
@@ -565,26 +570,37 @@ ${snapshot.data.snapshot.value["TimeStamp List"][index].toString().substring(8,1
                                                 ),
                                               ),
                                               onPressed: (){
-                                                if(taskController.text != "" && taskController.text != snapshot.data.snapshot.value["Task List"][index]){
-                                                  taskList[index] = taskController.text;
-                                                  print("This is taskList at edited area ==> $taskList");
-                                                  timeStampList[index] = DateTime.now().toString();
-                                                  taskController.text = "";
-                                                  FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).set(
-                                                      {
-                                                        "Task List":taskList,
-                                                        "Count":taskList.length,
-                                                        "Checker":checkBoxList,
-                                                        "Time Stamp":timeStampList,
-                                                      });
-                                                  FirebaseDatabase.instance.reference().child(auth.currentUser.uid).update(
-                                                      {
-                                                        "Task List":taskList,
-                                                        "TimeStamp List":timeStampList,
-                                                      }).whenComplete(() => Navigator.of(context).pop());
-                                                }else{
-                                                  Navigator.of(context).pop();
-                                                }
+                                                //not needed mostly so commented as onChanged is more good and save iss just extra
+                                                // if(taskController.text != "" && taskController.text != snapshot.data.snapshot.value["Task List"][index]){
+                                                //   taskList[index] = taskController.text;
+                                                //   print("This is taskList at edited area ==> $taskList");
+                                                //   timeStampList[index] = DateTime.now().toString();
+                                                //   taskController.text = "";
+                                                //   FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).set(
+                                                //       {
+                                                //         "Task List":taskList,
+                                                //         "Count":taskList.length,
+                                                //         "Checker":checkBoxList,
+                                                //         "Time Stamp":timeStampList,
+                                                //       });
+                                                //   FirebaseDatabase.instance.reference().child(auth.currentUser.uid).update(
+                                                //       {
+                                                //         "Task List":taskList,
+                                                //         "TimeStamp List":timeStampList,
+                                                //       }).whenComplete(() => Navigator.of(context).pop());
+                                                // }else if(taskController.text == ""){
+                                                //   taskList[index] = q;
+                                                //   // print("This is taskList at edited area ==> $taskList");
+                                                //   timeStampList[index] = DateTime.now().toString();
+                                                //   FirebaseDatabase.instance.reference().child(auth.currentUser.uid).update(
+                                                //       {
+                                                //         "Task List":taskList,
+                                                //         "TimeStamp List":timeStampList,
+                                                //       }).whenComplete(() => Navigator.of(context).pop(),);
+                                                // }else{
+                                                //   Navigator.of(context).pop();
+                                                // }
+                                                Navigator.of(context).pop();
                                               },
                                             ),
                                           ],
