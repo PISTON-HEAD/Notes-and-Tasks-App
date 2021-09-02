@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
-import 'package:to_do_list/MyApp/terms_conditions.dart';
 import 'MyApp/profile.dart';
 import 'package:flutter/services.dart'; //For using SystemChrome
 

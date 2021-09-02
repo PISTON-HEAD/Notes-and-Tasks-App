@@ -26,14 +26,11 @@ class _NotesScreenState extends State<NotesScreen> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
 uploader()async{
-  FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).collection("Notes").add(
-      {
-        "Title":titleEditingController.text,
-        "Content":notesEditingController.text,
-        "Time":DateTime.now().toString(),
-      }).whenComplete(() => Navigator.of(context).pop());
-
-
+  FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).collection("Notes").doc(DateTime.now().toString()).set({
+  "Title":titleEditingController.text,
+  "Content":notesEditingController.text,
+  "Time":DateTime.now().toString(),
+  }).whenComplete(() => Navigator.of(context).pop());
 }
 
 
