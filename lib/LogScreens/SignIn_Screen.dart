@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list/LogScreens/forgot_pass.dart';
 import 'package:to_do_list/MyApp/profile.dart';
+import 'package:to_do_list/authenticate/GoogleAuthenticate.dart';
 import 'package:to_do_list/authenticate/firebaseAuth.dart';
 import 'package:to_do_list/widgets/customWidgets.dart';
 
@@ -353,7 +354,25 @@ class _SignIn_PageState extends State<SignIn_Page> {
                           SizedBox(
                             height: 3,
                           ),
-
+                          MaterialButton(
+                            color: Colors.indigoAccent,
+                            minWidth: double.maxFinite,
+                            autofocus: true,
+                            splashColor: Colors.indigo,
+                            hoverColor: Colors.green,
+                            child: Text("Google Sign In",style: buttonStyle(Colors.white),),
+                            onPressed: () async{
+                              signInWithGoogle().then((value) async {
+                                if(value == null){
+                                  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                                  sharedPreferences.setString("LoggedIn", "true");
+                                  print(sharedPreferences.getString("LoggedIn"));
+                                  print("next screen");
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) =>profile_Screen()));
+                                }
+                              });
+                            },
+                          ),
                           SizedBox(
                             height: 5,
                           ),

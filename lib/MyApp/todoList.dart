@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
 import 'package:to_do_list/MyApp/aboutTheApp.dart';
@@ -138,10 +139,19 @@ class _todoListCreationState extends State<todoListCreation> {
                       MaterialPageRoute(
                           builder: (context) => AppInfo(value: value)));
                 } else if (value == 3) {
+                  GoogleSignIn signIn = GoogleSignIn();
                   print("Log Out");
-                  auth.signOut();
+                  User user = auth.currentUser;
+                  print("Provider Info:${user.providerData[0].toString()} ");
+                  if(auth.currentUser.providerData[0].providerId == "google.com"){
+                    print("Google Sign-OUT");
+                    await signIn.disconnect();
+                    await signIn.signOut();
+                  }else{
+                    await auth.signOut();
+                  }
                   SharedPreferences shared =
-                      await SharedPreferences.getInstance();
+                  await SharedPreferences.getInstance();
                   shared.setString("LoggedIn", "false");
                   Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) => SignIn_Page()));
