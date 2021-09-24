@@ -31,6 +31,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
   bool switcher = true;
   bool screenValue = !true;
   String errorMsg;
+  bool loader = false;
 
   final Color primaryColor = Color(0xff18203d);
   final Color secondaryColor = Color(0xff232c51);
@@ -40,12 +41,16 @@ class _SignIn_PageState extends State<SignIn_Page> {
   //signingUp
   signMeUp() {
     if (formKey.currentState.validate()) {
+      setState(() {
+        loader = true;
+      });
       signUp(emailController.text, passwordController.text,
               userNameController.text)
           .then((value) async {
         if (value != null) {
           setState(() {
             screenValue = true;
+            loader = true;
             for (int i = 1; i < value.toString().length; i++) {
               if (value.toString()[i] == "]") {
                 errorMsg = value.toString().substring(i + 2);
@@ -70,10 +75,14 @@ class _SignIn_PageState extends State<SignIn_Page> {
 
   signMeIn() {
     if (formKey.currentState.validate()) {
+      setState(() {
+        loader = true;
+      });
       logInUser(emailController.text, passwordController.text).then((value) async {
         if (value != null) {
           setState(() {
             screenValue = true;
+            loader = false;
             for (int i = 1; i < value.toString().length; i++) {
               if (value.toString()[i] == "]") {
                 errorMsg = value.toString().substring(i + 2);
@@ -113,7 +122,16 @@ class _SignIn_PageState extends State<SignIn_Page> {
   Widget build(BuildContext context) {
     return WillPopScope(
       child: SafeArea(
-        child: Scaffold(
+        child: loader == true?Scaffold(body: Center(
+          child: Container(
+            height: 150,
+            width: 150,
+            child: CircularProgressIndicator(
+              color: Colors.greenAccent,
+              strokeWidth: 5.0,
+            ),
+          ),
+        ),):Scaffold(
           appBar: appBar_Main(context, "Notes and Tasks Pro", Colors.black),
           backgroundColor: primaryColor,
           body: SingleChildScrollView(
