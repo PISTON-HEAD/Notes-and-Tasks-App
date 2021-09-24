@@ -50,261 +50,281 @@ class _profile_ScreenState extends State<profile_Screen>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Column(
-            children: [
-              Text(
-                "Notes",
-                style: appBar_Style,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  MaterialButton(
-                    onPressed: () {},
-                    child: Icon(
-                      FontAwesomeIcons.stickyNote,
-                      color: Colors.limeAccent,
-                      size: 28.8,
+    return WillPopScope(
+      child:  SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: Column(
+              children: [
+                Text(
+                  "Notes",
+                  style: appBar_Style,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    MaterialButton(
+                      onPressed: () {},
+                      child: Icon(
+                        FontAwesomeIcons.stickyNote,
+                        color: Colors.limeAccent,
+                        size: 28.8,
+                      ),
                     ),
+                    MaterialButton(
+                      autofocus: true,
+                      child: Icon(
+                        FontAwesomeIcons.solidClipboard,
+                        color: Colors.grey,
+                        size: 28.8,
+                      ),
+                      onPressed: () {
+                        Future.delayed(dur).then((value) {
+                          print("$dur sec delayed");
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => todoListCreation()));
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            backgroundColor: CupertinoColors.black,
+            toolbarHeight: 85,
+            elevation: 10,
+            actions: [
+              PopupMenuButton(
+                color: CupertinoColors.systemTeal,
+                icon: Icon(
+                  Icons.more_vert_sharp,
+                  color: Colors.white70,
+                  size: 30,
+                ),
+                onSelected: (value) async {
+                  if (value == 0) {
+                    print("About App");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AppInfo(value: value)));
+                  } else if (value == 1) {
+                    print("About Developers");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AppInfo(value: value)));
+                  } else if (value == 3) {
+                    GoogleSignIn signIn = GoogleSignIn();
+                    print("Log Out");
+                    User user = auth.currentUser;
+                    print("Provider Info:${user.providerData[0].toString()} ");
+                    if(auth.currentUser.providerData[0].providerId == "google.com"){
+                      print("Google Sign-OUT");
+                      await signIn.disconnect();
+                      await signIn.signOut();
+                    }else{
+                      await auth.signOut();
+                    }
+                    SharedPreferences shared =
+                    await SharedPreferences.getInstance();
+                    shared.setString("LoggedIn", "false");
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => SignIn_Page()));
+                  } else if (value == 2) {
+                    print("Privacy Policy");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AppInfo(value: value)));
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    textStyle: popStyle(),
+                    child: Text("About App"),
+                    value: 0,
                   ),
-                  MaterialButton(
-                    autofocus: true,
-                    child: Icon(
-                      FontAwesomeIcons.solidClipboard,
-                      color: Colors.grey,
-                      size: 28.8,
-                    ),
-                    onPressed: () {
-                      Future.delayed(dur).then((value) {
-                        print("$dur sec delayed");
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => todoListCreation()));
-                      });
-                    },
+                  PopupMenuItem(
+                    textStyle: popStyle(),
+                    child: Text("About Developers"),
+                    value: 1,
+                  ),
+                  PopupMenuItem(
+                    textStyle: popStyle(),
+                    child: Text("Privacy Policy"),
+                    value: 2,
+                  ),
+                  PopupMenuItem(
+                    textStyle: popStyle(),
+                    child: Text("Log Out"),
+                    value: 3,
                   ),
                 ],
               ),
             ],
           ),
-          backgroundColor: CupertinoColors.black,
-          toolbarHeight: 85,
-          elevation: 10,
-          actions: [
-            PopupMenuButton(
-              color: CupertinoColors.systemTeal,
-              icon: Icon(
-                Icons.more_vert_sharp,
-                color: Colors.white70,
-                size: 30,
-              ),
-              onSelected: (value) async {
-                if (value == 0) {
-                  print("About App");
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AppInfo(value: value)));
-                } else if (value == 1) {
-                  print("About Developers");
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AppInfo(value: value)));
-                } else if (value == 3) {
-                  GoogleSignIn signIn = GoogleSignIn();
-                  print("Log Out");
-                  User user = auth.currentUser;
-                  print("Provider Info:${user.providerData[0].toString()} ");
-                  if(auth.currentUser.providerData[0].providerId == "google.com"){
-                    print("Google Sign-OUT");
-                    await signIn.disconnect();
-                    await signIn.signOut();
-                  }else{
-                    await auth.signOut();
-                  }
-                  SharedPreferences shared =
-                  await SharedPreferences.getInstance();
-                  shared.setString("LoggedIn", "false");
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => SignIn_Page()));
-                } else if (value == 2) {
-                  print("Privacy Policy");
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AppInfo(value: value)));
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  textStyle: popStyle(),
-                  child: Text("About App"),
-                  value: 0,
-                ),
-                PopupMenuItem(
-                  textStyle: popStyle(),
-                  child: Text("About Developers"),
-                  value: 1,
-                ),
-                PopupMenuItem(
-                  textStyle: popStyle(),
-                  child: Text("Privacy Policy"),
-                  value: 2,
-                ),
-                PopupMenuItem(
-                  textStyle: popStyle(),
-                  child: Text("Log Out"),
-                  value: 3,
-                ),
-              ],
+          backgroundColor: primaryColor,
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.cyanAccent,
+            highlightElevation: 20,
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => NotesScreen()));
+            },
+            child: Icon(
+              FontAwesomeIcons.plus,
+              color: Colors.black,
+              size: 25,
             ),
-          ],
-        ),
-        backgroundColor: primaryColor,
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.cyanAccent,
-          highlightElevation: 20,
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => NotesScreen()));
-          },
-          child: Icon(
-            FontAwesomeIcons.plus,
-            color: Colors.black,
-            size: 25,
           ),
-        ),
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            Positioned(
-              top: 2,
-              child: GestureDetector(
-                onTap: () {
-                  showSearch(context: context, delegate: searchTitle());
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.search_rounded,
-                        color: CupertinoColors.black,
-                        size: 25,
-                      ),
-                      Text(
-                        "Search with Title Name",
-                        style: TextStyle(
-                          color: primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned(
+                top: 2,
+                child: GestureDetector(
+                  onTap: () {
+                    showSearch(context: context, delegate: searchTitle());
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.search_rounded,
+                          color: CupertinoColors.black,
+                          size: 25,
                         ),
-                      )
-                    ],
+                        Text(
+                          "Search with Title Name",
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        )
+                      ],
+                    ),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.grey,
+                        border: Border.all(color: Colors.cyanAccent, width: 3)),
+                    height: 45,
+                    width: MediaQuery.of(context).size.width,
                   ),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey,
-                      border: Border.all(color: Colors.cyanAccent, width: 3)),
-                  height: 45,
-                  width: MediaQuery.of(context).size.width,
                 ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 45),
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                image: NetworkImage(
-                  "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",),
-                fit: BoxFit.cover,
-              )),
-              child: StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection("My Task")
-                      .doc(auth.currentUser.uid)
-                      .collection("Notes")
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    return GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2),
-                      itemCount:
-                          snapshot.hasData ? snapshot.data.docs.length : 0,
-                      itemBuilder: (context, index) {
-                        var count = snapshot.data.docs.length;
-                        return GestureDetector(
-                          onTap: () {
-                            print(snapshot.data.docs[count - 1 - index]["Title"]);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SeeNote(
-                                          getDoc: snapshot.data.docs[count - 1 - index],
-                                        )));
-                          },
-                          onLongPress: () {
-                            int delete = count - 1 - index;
-                            buildShowDialog(context, snapshot, delete);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                      "https://wallpapercave.com/wp/wp5056723.jpg"),
-                                  fit: BoxFit.cover,
-                                ),
-                                color: Color.fromARGB(255, 28, 28, 30),
-                                border: Border.all(
-                                    color: Colors.cyanAccent, width: 2.5),
-                                borderRadius: BorderRadius.circular(10)),
-                            //height: 180,
-                            margin: EdgeInsets.all(10),
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  bottom:
-                                      25.0), //here is the padding for content
-                              child: SingleChildScrollView(
-                                child: ListTile(
-                                  autofocus: true,
-                                  subtitle: Text(
-                                    snapshot.data.docs[count - 1 - index]["Content"],
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 152, 151, 158),
-                                        fontWeight: FontWeight.w800,
-                                        decorationThickness: 2.5,
-                                        fontSize: 12,
-                                        fontFamily: "Merriweather"),
+              Container(
+                margin: EdgeInsets.only(top: 45),
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg",),
+                      fit: BoxFit.cover,
+                    )),
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection("My Task")
+                        .doc(auth.currentUser.uid)
+                        .collection("Notes")
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      return GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2),
+                        itemCount:
+                        snapshot.hasData ? snapshot.data.docs.length : 0,
+                        itemBuilder: (context, index) {
+                          var count = snapshot.data.docs.length;
+                          return GestureDetector(
+                            onTap: () {
+                              print(snapshot.data.docs[count - 1 - index]["Title"]);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SeeNote(
+                                        getDoc: snapshot.data.docs[count - 1 - index],
+                                      )));
+                            },
+                            onLongPress: () {
+                              int delete = count - 1 - index;
+                              buildShowDialog(context, snapshot, delete);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                        "https://wallpapercave.com/wp/wp5056723.jpg"),
+                                    fit: BoxFit.cover,
                                   ),
-                                  title: Text(
-                                    snapshot.data.docs[count - 1 - index]["Title"].toString().toLowerCase(),
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        decorationThickness: 2.5,
-                                        fontSize: 22,
-                                        fontFamily: "ZenTokyoZoo"),
+                                  color: Color.fromARGB(255, 28, 28, 30),
+                                  border: Border.all(
+                                      color: Colors.cyanAccent, width: 2.5),
+                                  borderRadius: BorderRadius.circular(10)),
+                              //height: 180,
+                              margin: EdgeInsets.all(10),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    bottom:
+                                    25.0), //here is the padding for content
+                                child: SingleChildScrollView(
+                                  child: ListTile(
+                                    autofocus: true,
+                                    subtitle: Text(
+                                      snapshot.data.docs[count - 1 - index]["Content"],
+                                      style: TextStyle(
+                                          color: Color.fromARGB(255, 152, 151, 158),
+                                          fontWeight: FontWeight.w800,
+                                          decorationThickness: 2.5,
+                                          fontSize: 12,
+                                          fontFamily: "Merriweather"),
+                                    ),
+                                    title: Text(
+                                      snapshot.data.docs[count - 1 - index]["Title"].toString().toLowerCase(),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          decorationThickness: 2.5,
+                                          fontSize: 22,
+                                          fontFamily: "ZenTokyoZoo"),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  }),
-            ),
-          ],
+                          );
+                        },
+                      );
+                    }),
+              ),
+            ],
+          ),
         ),
       ),
+      onWillPop:(){
+      return showDialog(context: context, builder: (BuildContext context){
+        return AlertDialog(
+          content: Text("Do you want to exit the App ?"),
+          actions: [
+            TextButton(
+              child: Text("No"),
+              onPressed: ()=>Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: Text("Exit"),
+              onPressed: ()=>Navigator.of(context).pop(true),
+            ),
+          ],
+        );
+      });
+    },
     );
+
   }
 
   Future buildShowDialog(BuildContext context,

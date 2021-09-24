@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list/LogScreens/SignIn_Screen.dart';
+import 'LogScreens/welcome.dart';
 import 'MyApp/profile.dart';
 import 'package:flutter/services.dart'; //For using SystemChrome
 
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Notes And Task Pro',
       debugShowCheckedModeBanner:false,
-      home: SignIn_Page(),
+      home: WelcomeScreen(),
     );
   }
 }
@@ -56,22 +57,4 @@ class SignedInApp extends StatelessWidget {
   }
 }
 
-// class ScreenSplash extends StatefulWidget {
-//
-//   @override
-//   _ScreenSplashState createState() => _ScreenSplashState();
-// }
-//
-// class _ScreenSplashState extends State<ScreenSplash> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return AnimatedSplashScreen(
-//       nextScreen: profile_Screen(),
-//       splashTransition: SplashTransition.rotationTransition,
-//       splash: Icon(Icons.article_outlined),
-//       centered: true,
-//       animationDuration: Duration(seconds: 2),
-//       splashIconSize: 25,
-//     );
-//   }
-// }
+

@@ -75,319 +75,338 @@ class _todoListCreationState extends State<todoListCreation> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Column(
-            children: [
-              Text(
-                "Tasks",
-                style: appBar_Style,
+    return WillPopScope(
+      onWillPop:(){
+        return showDialog(context: context, builder: (BuildContext context){
+          return AlertDialog(
+            content: Text("Do you want to exit the App ?"),
+            actions: [
+              TextButton(
+                child: Text("No"),
+                onPressed: ()=>Navigator.of(context).pop(),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  MaterialButton(
-                    onPressed: () {
-                      //Navigator.of(context).pop();
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => profile_Screen()));
-                    },
-                    child: Icon(
-                      FontAwesomeIcons.stickyNote,
-                      color: Colors.grey,
-                      size: 28.8,
-                    ),
-                  ),
-                  MaterialButton(
-                      autofocus: true,
-                      child: Icon(
-                        FontAwesomeIcons.solidClipboard,
-                        color: Colors.limeAccent,
-                        size: 28.8,
-                      ),
-                      onPressed: () {}),
-                ],
+              TextButton(
+                child: Text("Exit"),
+                onPressed: ()=>Navigator.of(context).pop(true),
               ),
             ],
-          ),
-          backgroundColor: CupertinoColors.black,
-          toolbarHeight: 85,
-          elevation: 10,
-          actions: [
-            PopupMenuButton(
-              color: CupertinoColors.systemTeal,
-              icon: Icon(
-                Icons.more_vert_sharp,
-                color: Colors.white70,
-                size: 30,
-              ),
-              onSelected: (value) async {
-                if (value == 0) {
-                  print("About App");
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AppInfo(value: value)));
-                } else if (value == 1) {
-                  print("About Developers");
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AppInfo(value: value)));
-                } else if (value == 3) {
-                  GoogleSignIn signIn = GoogleSignIn();
-                  print("Log Out");
-                  User user = auth.currentUser;
-                  print("Provider Info:${user.providerData[0].toString()} ");
-                  if(auth.currentUser.providerData[0].providerId == "google.com"){
-                    print("Google Sign-OUT");
-                    await signIn.disconnect();
-                    await signIn.signOut();
-                  }else{
-                    await auth.signOut();
-                  }
-                  SharedPreferences shared =
-                  await SharedPreferences.getInstance();
-                  shared.setString("LoggedIn", "false");
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => SignIn_Page()));
-                } else if (value == 2) {
-                  print("Privacy Policy");
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AppInfo(value: value)));
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  textStyle: popStyle(),
-                  child: Text("About App"),
-                  value: 0,
+          );
+        });
+      },
+      child:SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: Column(
+              children: [
+                Text(
+                  "Tasks",
+                  style: appBar_Style,
                 ),
-                PopupMenuItem(
-                  textStyle: popStyle(),
-                  child: Text("About Developers"),
-                  value: 1,
-                ),
-                PopupMenuItem(
-                  textStyle: popStyle(),
-                  child: Text("Privacy Policy"),
-                  value: 2,
-                ),
-                PopupMenuItem(
-                  textStyle: popStyle(),
-                  child: Text("Log Out"),
-                  value: 3,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    MaterialButton(
+                      onPressed: () {
+                        //Navigator.of(context).pop();
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => profile_Screen()));
+                      },
+                      child: Icon(
+                        FontAwesomeIcons.stickyNote,
+                        color: Colors.grey,
+                        size: 28.8,
+                      ),
+                    ),
+                    MaterialButton(
+                        autofocus: true,
+                        child: Icon(
+                          FontAwesomeIcons.solidClipboard,
+                          color: Colors.limeAccent,
+                          size: 28.8,
+                        ),
+                        onPressed: () {}),
+                  ],
                 ),
               ],
             ),
-          ],
-        ), //u normally do the appbar
-        backgroundColor: CupertinoColors.label,
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                  "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg"),
-              fit: BoxFit.cover,
+            backgroundColor: CupertinoColors.black,
+            toolbarHeight: 85,
+            elevation: 10,
+            actions: [
+              PopupMenuButton(
+                color: CupertinoColors.systemTeal,
+                icon: Icon(
+                  Icons.more_vert_sharp,
+                  color: Colors.white70,
+                  size: 30,
+                ),
+                onSelected: (value) async {
+                  if (value == 0) {
+                    print("About App");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AppInfo(value: value)));
+                  } else if (value == 1) {
+                    print("About Developers");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AppInfo(value: value)));
+                  } else if (value == 3) {
+                    GoogleSignIn signIn = GoogleSignIn();
+                    print("Log Out");
+                    User user = auth.currentUser;
+                    print("Provider Info:${user.providerData[0].toString()} ");
+                    if(auth.currentUser.providerData[0].providerId == "google.com"){
+                      print("Google Sign-OUT");
+                      await signIn.disconnect();
+                      await signIn.signOut();
+                    }else{
+                      await auth.signOut();
+                    }
+                    SharedPreferences shared =
+                    await SharedPreferences.getInstance();
+                    shared.setString("LoggedIn", "false");
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => SignIn_Page()));
+                  } else if (value == 2) {
+                    print("Privacy Policy");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AppInfo(value: value)));
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    textStyle: popStyle(),
+                    child: Text("About App"),
+                    value: 0,
+                  ),
+                  PopupMenuItem(
+                    textStyle: popStyle(),
+                    child: Text("About Developers"),
+                    value: 1,
+                  ),
+                  PopupMenuItem(
+                    textStyle: popStyle(),
+                    child: Text("Privacy Policy"),
+                    value: 2,
+                  ),
+                  PopupMenuItem(
+                    textStyle: popStyle(),
+                    child: Text("Log Out"),
+                    value: 3,
+                  ),
+                ],
+              ),
+            ],
+          ), //u normally do the appbar
+          backgroundColor: CupertinoColors.label,
+          body: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(
+                    "https://i.pinimg.com/originals/4f/6d/05/4f6d052bb1b26150115888ea06d4c106.jpg"),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          child: StreamBuilder(
-              stream: FirebaseDatabase.instance
-                  .reference()
-                  .child(auth.currentUser.uid)
-                  .orderByChild("Time Stamp")
-                  .onValue,
-              builder: (context, snapshot) {
-                return snapshot.hasData &&
-                        !snapshot.hasError &&
-                        snapshot.data.snapshot.value["Task List"] != null
-                    ? ListView.builder(
-                        addAutomaticKeepAlives: true,
-                        itemCount: snapshot.data.snapshot.value["Count"],
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.black87,
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                    "https://wallpapercave.com/wp/wp5056723.jpg"),
-                                fit: BoxFit.cover,
-                              ),
-                              border: Border.all(
-                                color: Colors.cyanAccent,
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: ListTile(
-                              leading: Checkbox(
-                                  side: BorderSide(
-                                    color: Colors.white,
-                                  ),
-                                  autofocus: true,
-                                  activeColor: Colors.cyanAccent,
-                                  splashRadius: 20,
-                                  value: snapshot.data.snapshot
-                                      .value["CheckBox List"][index],
-                                  onChanged: (value) {
-                                    checkBoxList = snapshot
-                                        .data.snapshot.value["CheckBox List"];
-                                    if (checkBoxList[index] == false) {
-                                      checkBoxList[index] = true;
-                                    } else {
-                                      checkBoxList[index] = false;
-                                    }
-                                    FirebaseDatabase.instance
-                                        .reference()
-                                        .child(auth.currentUser.uid)
-                                        .update({
-                                      "CheckBox List": checkBoxList,
-                                    });
-                                  }),
-                              title: Text(
-                                "${index+1}) ${snapshot.data.snapshot.value["Task List"][index]}",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: "Merriweather",
-                                  fontSize: 15.5,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: IconButton(
-                                onPressed: () {
-                                  DeleteTask(context, snapshot, index);
-                                },
-                                icon: Icon(
-                                  FontAwesomeIcons.trash,
-                                  color: Colors.red,
-                                ),
-                              ),
-                              onLongPress: (){
-                                DeleteTask(context, snapshot, index);
-                              },
-                              onTap: () {
-                                getAll();
-                                taskController = TextEditingController(
-                                    text: snapshot.data.snapshot
-                                        .value["Task List"][index]);
-                                taskEditor(context, snapshot, index);
-                              },
-                            ),
-                          );
-                        },
-                      )
-                    : Container();
-              }),
-        ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.cyanAccent,
-          highlightElevation: 15,
-          autofocus: true,
-          child: Icon(
-            FontAwesomeIcons.plus,
-            color: Colors.black,
-            size: 23,
-          ),
-          onPressed: () {
-            taskController.text="";
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    scrollable: true,
-                    title: Text(
-                      "Add New Task",
-                      style: TextStyle(
-                        fontFamily: "Acme",
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    content: TextFormField(
-                      onChanged: (value){
-                        print(value);
-                      },
-                      autofocus: true,
-                      maxLines: null,
-                      textInputAction: TextInputAction.newline,
-                      keyboardType: TextInputType.multiline,
-                      controller: taskController,
-                    ),
-                    actions: [
-                      TextButton(
-                        child: Text(
-                          "Save",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontFamily: "Merriweather",
+            child: StreamBuilder(
+                stream: FirebaseDatabase.instance
+                    .reference()
+                    .child(auth.currentUser.uid)
+                    .orderByChild("Time Stamp")
+                    .onValue,
+                builder: (context, snapshot) {
+                  return snapshot.hasData &&
+                      !snapshot.hasError &&
+                      snapshot.data.snapshot.value["Task List"] != null
+                      ? ListView.builder(
+                    addAutomaticKeepAlives: true,
+                    itemCount: snapshot.data.snapshot.value["Count"],
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.black87,
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                "https://wallpapercave.com/wp/wp5056723.jpg"),
+                            fit: BoxFit.cover,
                           ),
+                          border: Border.all(
+                            color: Colors.cyanAccent,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
                         ),
-                        onPressed: () {
-                          if(taskController.text != ""){
-                            FirebaseDatabase.instance
-                              .reference()
-                              .child(auth.currentUser.uid)
-                              .once()
-                              .then((data) {
-                            taskList = [];
-                            checkBoxList = [];
-                            timeStampList = [];
-                            print("Database at get all");
-                            print(data.value["Task List"]);
-                            if (data.value["Count"] == 0) {
-                              print("Init Count == 0");
-                            } else {
-                              for (int i = 0; i < data.value["Count"]; i++) {
-                                taskList.add(data.value["Task List"][i]);
-                                checkBoxList
-                                    .add(data.value["CheckBox List"][i]);
-                                timeStampList
-                                    .add(data.value["TimeStamp List"][i]);
-                              }
-                            }
-                          }).whenComplete(() {
-                            print("This taskList at save get All \n $taskList");
-                            taskList.add(taskController.text);
-                            checkBoxList.add(false);
-                            timeStampList.add(DateTime.now().toString());
-                            count = taskList.length;
-                            print("Task List ==> $taskList");
-                            print("CheckBox List ==> $checkBoxList");
-                            print("Time Stamp List ==> $timeStampList");
-                            print("Count ==> $count");
-                            taskController.text = "";
-                            FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).set(
-                                {
-                                  "Task List":taskList,
-                                  "Count":taskList.length,
-                                  "Checker":checkBoxList,
-                                  "Time Stamp":timeStampList,
+                        child: ListTile(
+                          leading: Checkbox(
+                              side: BorderSide(
+                                color: Colors.white,
+                              ),
+                              autofocus: true,
+                              activeColor: Colors.cyanAccent,
+                              splashRadius: 20,
+                              value: snapshot.data.snapshot
+                                  .value["CheckBox List"][index],
+                              onChanged: (value) {
+                                checkBoxList = snapshot
+                                    .data.snapshot.value["CheckBox List"];
+                                if (checkBoxList[index] == false) {
+                                  checkBoxList[index] = true;
+                                } else {
+                                  checkBoxList[index] = false;
+                                }
+                                FirebaseDatabase.instance
+                                    .reference()
+                                    .child(auth.currentUser.uid)
+                                    .update({
+                                  "CheckBox List": checkBoxList,
                                 });
-                            FirebaseDatabase.instance
-                                .reference()
-                                .child(auth.currentUser.uid)
-                                .set({
-                              "Count": count,
-                              "Task List": taskList,
-                              "CheckBox List": checkBoxList,
-                              "TimeStamp List": timeStampList,
-                            }).whenComplete(() => Navigator.of(context).pop());
-                          });}else{
-                            Navigator.of(context).pop();
-                          }
+                              }),
+                          title: Text(
+                            "${index+1}) ${snapshot.data.snapshot.value["Task List"][index]}",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "Merriweather",
+                              fontSize: 15.5,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          trailing: IconButton(
+                            onPressed: () {
+                              DeleteTask(context, snapshot, index);
+                            },
+                            icon: Icon(
+                              FontAwesomeIcons.trash,
+                              color: Colors.red,
+                            ),
+                          ),
+                          onLongPress: (){
+                            DeleteTask(context, snapshot, index);
+                          },
+                          onTap: () {
+                            getAll();
+                            taskController = TextEditingController(
+                                text: snapshot.data.snapshot
+                                    .value["Task List"][index]);
+                            taskEditor(context, snapshot, index);
+                          },
+                        ),
+                      );
+                    },
+                  )
+                      : Container();
+                }),
+          ),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.cyanAccent,
+            highlightElevation: 15,
+            autofocus: true,
+            child: Icon(
+              FontAwesomeIcons.plus,
+              color: Colors.black,
+              size: 23,
+            ),
+            onPressed: () {
+              taskController.text="";
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      scrollable: true,
+                      title: Text(
+                        "Add New Task",
+                        style: TextStyle(
+                          fontFamily: "Acme",
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      content: TextFormField(
+                        onChanged: (value){
+                          print(value);
                         },
-                      )
-                    ],
-                  );
-                });
-          },
+                        autofocus: true,
+                        maxLines: null,
+                        textInputAction: TextInputAction.newline,
+                        keyboardType: TextInputType.multiline,
+                        controller: taskController,
+                      ),
+                      actions: [
+                        TextButton(
+                          child: Text(
+                            "Save",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontFamily: "Merriweather",
+                            ),
+                          ),
+                          onPressed: () {
+                            if(taskController.text != ""){
+                              FirebaseDatabase.instance
+                                  .reference()
+                                  .child(auth.currentUser.uid)
+                                  .once()
+                                  .then((data) {
+                                taskList = [];
+                                checkBoxList = [];
+                                timeStampList = [];
+                                print("Database at get all");
+                                print(data.value["Task List"]);
+                                if (data.value["Count"] == 0) {
+                                  print("Init Count == 0");
+                                } else {
+                                  for (int i = 0; i < data.value["Count"]; i++) {
+                                    taskList.add(data.value["Task List"][i]);
+                                    checkBoxList
+                                        .add(data.value["CheckBox List"][i]);
+                                    timeStampList
+                                        .add(data.value["TimeStamp List"][i]);
+                                  }
+                                }
+                              }).whenComplete(() {
+                                print("This taskList at save get All \n $taskList");
+                                taskList.add(taskController.text);
+                                checkBoxList.add(false);
+                                timeStampList.add(DateTime.now().toString());
+                                count = taskList.length;
+                                print("Task List ==> $taskList");
+                                print("CheckBox List ==> $checkBoxList");
+                                print("Time Stamp List ==> $timeStampList");
+                                print("Count ==> $count");
+                                taskController.text = "";
+                                FirebaseFirestore.instance.collection("My Task").doc(auth.currentUser.uid).set(
+                                    {
+                                      "Task List":taskList,
+                                      "Count":taskList.length,
+                                      "Checker":checkBoxList,
+                                      "Time Stamp":timeStampList,
+                                    });
+                                FirebaseDatabase.instance
+                                    .reference()
+                                    .child(auth.currentUser.uid)
+                                    .set({
+                                  "Count": count,
+                                  "Task List": taskList,
+                                  "CheckBox List": checkBoxList,
+                                  "TimeStamp List": timeStampList,
+                                }).whenComplete(() => Navigator.of(context).pop());
+                              });}else{
+                              Navigator.of(context).pop();
+                            }
+                          },
+                        )
+                      ],
+                    );
+                  });
+            },
+          ),
         ),
       ),
     );
