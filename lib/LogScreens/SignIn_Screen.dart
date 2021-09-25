@@ -122,12 +122,14 @@ class _SignIn_PageState extends State<SignIn_Page> {
   Widget build(BuildContext context) {
     return WillPopScope(
       child: SafeArea(
-        child: loader == true?Scaffold(body: Center(
+        child: loader == true?Scaffold(
+          backgroundColor: Colors.cyan,
+          body: Center(
           child: Container(
             height: 150,
             width: 150,
             child: CircularProgressIndicator(
-              color: Colors.greenAccent,
+              color: Colors.black,
               strokeWidth: 5.0,
             ),
           ),
@@ -151,7 +153,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
                       child: SizedBox(
-                        height: screenValue == true ? 60 : 0,
+                        height: screenValue == true ? 70 : 0,
                         width: MediaQuery.of(context).size.width,
                         child: screenValue == true
                             ? Container(

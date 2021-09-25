@@ -73,7 +73,7 @@ Future logInUser(String email ,String password)async{
     }
   }catch(e){
     print("this is error $e");
-    if(e.toString() == "[firebase_auth/wrong-password] The password is invalid or the user does not have a password." || e.toString() == "[firebase_auth/user-not-found] There is no user record corresponding to this identifier. The user may have been deleted."){
+    if(e.toString() == "[firebase_auth/wrong-password] The password is invalid or the user does not have a password." || e.toString() == "[firebase_auth/user-not-found] There is no user record corresponding to this identifier. The user may have been deleted." || e.toString().length > 10){
       print("true");
       return e.toString();
     }else{
